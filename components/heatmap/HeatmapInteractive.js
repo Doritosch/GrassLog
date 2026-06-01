@@ -16,13 +16,13 @@ const BUCKET_THRESHOLDS = ['0', '1', '2-3', '4-6', '7+']
 const GAP = 3
 const LABEL_COL = 18
 
-export default function HeatmapInteractive({ activities = [], theme = 'green', days = 365 }) {
+export default function HeatmapInteractive({ activities = [], theme = 'green' }) {
   const [tooltip, setTooltip] = useState(null)
   const [selected, setSelected] = useState(null)
   const [cellSize, setCellSize] = useState(14)
   const containerRef = useRef(null)
 
-  const weeks = buildHeatmapGrid(new Date(), days)
+  const weeks = buildHeatmapGrid(new Date())
   const countMap = buildCountMap(activities)
   const colors = BUCKET_COLORS[theme] || BUCKET_COLORS.green
 
@@ -146,6 +146,8 @@ export default function HeatmapInteractive({ activities = [], theme = 'green', d
                       cursor: cell.inRange ? 'pointer' : 'default',
                       outline: isSelected ? '2px solid #58a6ff' : 'none',
                       outlineOffset: 1,
+                      border: cell.inRange ? '1px solid rgba(255,255,255,0.06)' : 'none',
+                      boxSizing: 'border-box',
                     }}
                     onMouseEnter={(e) => {
                       if (!cell.inRange) return

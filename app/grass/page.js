@@ -9,9 +9,7 @@ export default async function GrassPage() {
 
   if (!user) redirect('/login')
 
-  const startDate = new Date()
-  startDate.setDate(startDate.getDate() - 364)
-  const startStr = startDate.toISOString().split('T')[0]
+  const startStr = `${new Date().getFullYear()}-01-01`
 
   const [{ data: activities }, { data: sidebarActivities }] = await Promise.all([
     supabase

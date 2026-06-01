@@ -27,15 +27,24 @@ export async function proxy(request) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
+  const { pathname } = request.nextUrl
+
+  // 루트 접속 시 로그인 여부에 따라 분기
+  if (pathname === '/') {
+    const url = request.nextUrl.clone()
+    url.pathname = user ? '/dashboard' : '/login'
+    return NextResponse.redirect(url)
+  }
+
   // 로그인 안 된 사용자가 보호된 페이지 접근 시 /login으로 리디렉트
-  if (!user && (request.nextUrl.pathname.startsWith('/dashboard') || request.nextUrl.pathname.startsWith('/grass'))) {
+  if (!user && (pathname.startsWith('/dashboard') || pathname.startsWith('/grass'))) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
   }
 
   // 로그인된 사용자가 /login 접근 시 /dashboard로 리디렉트
-  if (user && request.nextUrl.pathname === '/login') {
+  if (user && pathname === '/login') {
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
     return NextResponse.redirect(url)
@@ -45,5 +54,5 @@ export async function proxy(request) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/grass/:path*', '/login'],
+  matcher: ['/', '/dashboard/:path*', '/grass/:path*', '/login'],
 }
