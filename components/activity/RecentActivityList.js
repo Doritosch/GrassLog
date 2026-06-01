@@ -39,7 +39,7 @@ export default function RecentActivityList({ activities, selectedDate }) {
               className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#161B22] group transition-colors"
             >
               <div className="flex items-center gap-2 min-w-0 flex-1">
-                <div className="flex gap-1 shrink-0 min-w-[60px]">
+                <div className="flex gap-1 shrink-0 md:min-w-[60px]">
                   {categories.length > 0 ? categories.map((cat) => {
                     const color = getCategoryColor(cat)
                     return (
