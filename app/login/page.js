@@ -13,16 +13,6 @@ export default function LoginPage() {
     })
   }
 
-  const handleKakaoLogin = async () => {
-    const supabase = createClient()
-    await supabase.auth.signInWithOAuth({
-      provider: 'kakao',
-      options: {
-        redirectTo: `${location.origin}/auth/callback`,
-      },
-    })
-  }
-
   return (
     <main className="min-h-screen bg-[#0D1117] flex items-center justify-center px-4">
       <div className="w-full max-w-sm space-y-6">
@@ -58,16 +48,6 @@ export default function LoginPage() {
               <path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.31z"/>
             </svg>
             Google로 로그인
-          </button>
-
-          <button
-            onClick={handleKakaoLogin}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-[#FEE500] hover:bg-[#F0D800] text-[#191919] rounded-lg font-medium transition-colors"
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18">
-              <path fill="#191919" d="M9 1.5C4.86 1.5 1.5 4.08 1.5 7.26c0 2.01 1.2 3.78 3.03 4.83l-.77 2.88c-.07.24.18.44.4.3L7.5 13.1A8.8 8.8 0 0 0 9 13.02c4.14 0 7.5-2.58 7.5-5.76S13.14 1.5 9 1.5z"/>
-            </svg>
-            카카오로 로그인
           </button>
         </div>
       </div>
