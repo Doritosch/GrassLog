@@ -86,7 +86,7 @@ export default function ActivitySidebar({ activities, selectedDate, onSelectDate
 
       {/* 날짜 목록 */}
       {open && (
-        <div className="flex-1 overflow-y-auto py-2 scrollbar-dark">
+        <div className="flex-1 overflow-y-auto py-2 scrollbar-dark border-t border-[#30363D]">
           {sortedDates.length === 0 ? (
             <p className="text-[#8B949E] text-xs px-4 py-3">아직 기록이 없어요.</p>
           ) : (

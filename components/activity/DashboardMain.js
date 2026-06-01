@@ -3,19 +3,24 @@
 import { useMain } from '@/components/providers/MainProvider'
 import RecentActivityList from './RecentActivityList'
 import ActivityForm from './ActivityForm'
-import DateHeader from './DateHeader'
+import TopBar from '@/components/layout/TopBar'
+
+function formatDate(dateStr) {
+  const date = new Date(dateStr + 'T00:00:00')
+  const todayDate = new Date()
+  todayDate.setHours(0, 0, 0, 0)
+  const diff = Math.floor((todayDate - date) / (1000 * 60 * 60 * 24))
+  if (diff === 0) return '오늘'
+  if (diff === 1) return '어제'
+  return `${date.getMonth() + 1}월 ${date.getDate()}일`
+}
 
 export default function DashboardMain() {
   const { activities, categories, selectedDate, email } = useMain()
 
   return (
     <>
-      <div className="px-6 py-4 border-b border-[#30363D] flex items-center justify-between shrink-0">
-        <h1 className="text-white font-bold">GrassLog</h1>
-        <span className="text-[#8B949E] text-sm">{email}</span>
-      </div>
-
-      <DateHeader selectedDate={selectedDate} activities={activities} />
+      <TopBar title={formatDate(selectedDate)} email={email} />
 
       <div className="flex-1 overflow-y-auto px-6 py-4 scrollbar-dark">
         <RecentActivityList activities={activities} selectedDate={selectedDate} />
