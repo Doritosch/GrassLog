@@ -58,17 +58,28 @@ export default function ActivitySidebar({ activities, selectedDate, onSelectDate
     >
       {/* 헤더 + 토글 */}
       <div className="px-3 py-4 border-b border-[#30363D] flex items-center justify-between">
-        {open && (
-          <div className="flex items-center gap-2">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#39d353" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 22V12" />
-              <path d="M12 12C12 12 7 10 5 6c3 0 6 1 7 6z" fill="#39d353" stroke="none"/>
-              <path d="M12 12C12 12 17 10 19 6c-3 0-6 1-7 6z" fill="#26a641" stroke="none"/>
-              <path d="M12 12C10 9 9 6 10 3c1.5 1.5 2.5 4 2 9z" fill="#0e4429" stroke="none"/>
-            </svg>
-            <h2 className="text-white font-bold text-base">GrassLog</h2>
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          {/* 아이소메트릭 잔디 로고 */}
+          <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+            {/* 아이소메트릭 그리드 — 3×3 셀 */}
+            {/* 왼쪽 면 (어두운 초록) */}
+            <polygon points="4,18 10,14 10,22 4,26" fill="#0e4429"/>
+            <polygon points="10,18 16,14 16,22 10,26" fill="#0e4429"/>
+            <polygon points="16,18 22,14 22,22 16,26" fill="#0e4429"/>
+            {/* 오른쪽 면 (중간 초록) */}
+            <polygon points="10,14 16,10 16,18 10,22" fill="#006d32"/>
+            <polygon points="16,14 22,10 22,18 16,22" fill="#006d32"/>
+            <polygon points="22,14 28,10 28,18 22,22" fill="#006d32"/>
+            {/* 윗면 (밝은 초록) — 높이 다르게 */}
+            <polygon points="4,18 10,14 16,18 10,22" fill="#26a641"/>
+            <polygon points="10,14 16,10 22,14 16,18" fill="#39d353"/>
+            <polygon points="16,10 22,6  28,10 22,14" fill="#39d353"/>
+            <polygon points="10,22 16,18 22,22 16,26" fill="#26a641"/>
+            <polygon points="16,18 22,14 28,18 22,22" fill="#26a641"/>
+            <polygon points="4,26  10,22 16,26 10,30" fill="#006d32"/>
+          </svg>
+          {open && <h2 className="text-white font-bold text-base">GrassLog</h2>}
+        </div>
         <button
           onClick={() => setOpen(!open)}
           className="p-1 text-[#8B949E] hover:text-white hover:bg-[#21262D] rounded-md transition-colors ml-auto"
