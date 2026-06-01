@@ -58,7 +58,17 @@ export default function ActivitySidebar({ activities, selectedDate, onSelectDate
     >
       {/* 헤더 + 토글 */}
       <div className="px-3 py-4 border-b border-[#30363D] flex items-center justify-between">
-        {open && <h2 className="text-white font-bold text-base">GrassLog</h2>}
+        {open && (
+          <div className="flex items-center gap-2">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#39d353" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22V12" />
+              <path d="M12 12C12 12 7 10 5 6c3 0 6 1 7 6z" fill="#39d353" stroke="none"/>
+              <path d="M12 12C12 12 17 10 19 6c-3 0-6 1-7 6z" fill="#26a641" stroke="none"/>
+              <path d="M12 12C10 9 9 6 10 3c1.5 1.5 2.5 4 2 9z" fill="#0e4429" stroke="none"/>
+            </svg>
+            <h2 className="text-white font-bold text-base">GrassLog</h2>
+          </div>
+        )}
         <button
           onClick={() => setOpen(!open)}
           className="p-1 text-[#8B949E] hover:text-white hover:bg-[#21262D] rounded-md transition-colors ml-auto"
