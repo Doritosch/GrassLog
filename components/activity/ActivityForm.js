@@ -63,7 +63,6 @@ export default function ActivityForm({ categories }) {
           rows={1}
           placeholder="오늘 무엇을 했나요?"
           required
-          autoFocus
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault()
