@@ -2,10 +2,12 @@
 
 import { useState } from 'react'
 import { createActivity } from '@/app/dashboard/actions'
+import CategoryInput from './CategoryInput'
 
-export default function ActivityForm() {
+export default function ActivityForm({ categories }) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState([])
 
   const today = new Date().toISOString().split('T')[0]
 
@@ -15,14 +17,15 @@ export default function ActivityForm() {
     setError('')
 
     const formData = new FormData(e.target)
+    formData.set('category_name', selectedCategory.join(', '))
     const result = await createActivity(formData)
 
     if (result?.error) {
       setError(result.error)
     } else {
       e.target.reset()
-      // 날짜를 오늘로 다시 설정
       e.target.activity_date.value = today
+      setSelectedCategory([])
     }
     setLoading(false)
   }
@@ -41,11 +44,10 @@ export default function ActivityForm() {
       />
 
       <div className="flex gap-2">
-        <input
-          name="category_name"
-          type="text"
-          placeholder="카테고리 (선택)"
-          className="flex-1 px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-md text-white placeholder-[#8B949E] focus:outline-none focus:border-[#388BFD] text-sm"
+        <CategoryInput
+          categories={categories}
+          selected={selectedCategory}
+          onChange={setSelectedCategory}
         />
         <input
           name="activity_date"
