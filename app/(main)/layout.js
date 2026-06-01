@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import MainProvider from '@/components/providers/MainProvider'
 import SidebarWrapper from '@/components/activity/SidebarWrapper'
+import MobileTabBar from '@/components/layout/MobileTabBar'
 
 export default async function MainLayout({ children }) {
   const supabase = await createClient()
@@ -27,11 +28,16 @@ export default async function MainLayout({ children }) {
   return (
     <MainProvider activities={activities || []} categories={categories || []} email={user.email}>
       <div className="flex h-screen bg-[#0D1117]">
-        <SidebarWrapper />
+        {/* 데스크탑 사이드바 */}
+        <div className="hidden md:flex">
+          <SidebarWrapper />
+        </div>
         <div className="flex-1 flex flex-col h-screen overflow-hidden">
           {children}
         </div>
       </div>
+      {/* 모바일 하단 탭바 */}
+      <MobileTabBar />
     </MainProvider>
   )
 }
