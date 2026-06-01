@@ -1,8 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import DashboardClient from '@/components/activity/DashboardClient'
+import MainProvider from '@/components/providers/MainProvider'
+import SidebarWrapper from '@/components/activity/SidebarWrapper'
 
-export default async function DashboardPage() {
+export default async function MainLayout({ children }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -24,9 +25,13 @@ export default async function DashboardPage() {
   ])
 
   return (
-    <DashboardClient
-      activities={activities || []}
-      categories={categories || []}
-    />
+    <MainProvider activities={activities || []} categories={categories || []}>
+      <div className="flex h-screen bg-[#0D1117]">
+        <SidebarWrapper />
+        <div className="flex-1 flex flex-col h-screen overflow-hidden">
+          {children}
+        </div>
+      </div>
+    </MainProvider>
   )
 }

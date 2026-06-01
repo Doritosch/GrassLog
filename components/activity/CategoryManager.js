@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createCategory, deleteCategory } from '@/app/dashboard/actions'
+import { createCategory, deleteCategory } from '@/app/(main)/dashboard/actions'
 
 export default function CategoryManager({ categories }) {
   const [isOpen, setIsOpen] = useState(false)

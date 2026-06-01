@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createActivity } from '@/app/dashboard/actions'
+import { createActivity } from '@/app/(main)/dashboard/actions'
 import CategoryInput from './CategoryInput'
 import { getCategoryColor } from '@/lib/category-colors'
 

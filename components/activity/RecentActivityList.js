@@ -1,6 +1,6 @@
 'use client'
 
-import { deleteActivity } from '@/app/dashboard/actions'
+import { deleteActivity } from '@/app/(main)/dashboard/actions'
 import { getCategoryColor } from '@/lib/category-colors'
 
 export default function RecentActivityList({ activities, selectedDate }) {

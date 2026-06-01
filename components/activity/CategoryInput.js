@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { createCategory } from '@/app/dashboard/actions'
+import { createCategory } from '@/app/(main)/dashboard/actions'
 import { getCategoryColor } from '@/lib/category-colors'
 
 export default function CategoryInput({ categories, selected, onChange, compact = false }) {
@@ -119,7 +119,7 @@ export default function CategoryInput({ categories, selected, onChange, compact 
                       type="button"
                       onMouseDown={async (e) => {
                         e.preventDefault()
-                        const { deleteCategory } = await import('@/app/dashboard/actions')
+                        const { deleteCategory } = await import('@/app/(main)/dashboard/actions')
                         await deleteCategory(cat.id)
                         setLocalCategories((prev) => prev.filter((c) => c.id !== cat.id))
                         onChange(selected.filter((s) => s !== cat.name))
@@ -207,7 +207,7 @@ export default function CategoryInput({ categories, selected, onChange, compact 
                   type="button"
                   onMouseDown={async (e) => {
                     e.preventDefault()
-                    const { deleteCategory } = await import('@/app/dashboard/actions')
+                    const { deleteCategory } = await import('@/app/(main)/dashboard/actions')
                     await deleteCategory(cat.id)
                     setLocalCategories((prev) => prev.filter((c) => c.id !== cat.id))
                     onChange(selected.filter((s) => s !== cat.name))
