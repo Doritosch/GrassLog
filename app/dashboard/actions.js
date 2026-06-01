@@ -49,11 +49,9 @@ export async function deleteActivity(id) {
 
 export async function createCategory(formData) {
   const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
 
-  console.log('createCategory - user:', user?.id, 'authError:', authError)
-
-  if (!user) return { error: `로그인이 필요합니다. (authError: ${authError?.message})` }
+  if (!user) return { error: '로그인이 필요합니다.' }
 
   const name = formData.get('name')?.toString().trim()
   if (!name) return { error: '카테고리 이름을 입력해주세요.' }

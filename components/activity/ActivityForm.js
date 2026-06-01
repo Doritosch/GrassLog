@@ -3,13 +3,12 @@
 import { useState } from 'react'
 import { createActivity } from '@/app/dashboard/actions'
 import CategoryInput from './CategoryInput'
+import { getCategoryColor } from '@/lib/category-colors'
 
 export default function ActivityForm({ categories }) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState([])
-
-  const today = new Date().toISOString().split('T')[0]
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -18,55 +17,85 @@ export default function ActivityForm({ categories }) {
 
     const formData = new FormData(e.target)
     formData.set('category_name', selectedCategory.join(', '))
+    // 날짜는 오늘로 고정
+    const today = new Date().toISOString().split('T')[0]
+    formData.set('activity_date', today)
+
     const result = await createActivity(formData)
 
     if (result?.error) {
       setError(result.error)
     } else {
       e.target.reset()
-      e.target.activity_date.value = today
       setSelectedCategory([])
     }
     setLoading(false)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-[#161B22] border border-[#30363D] rounded-lg p-4 space-y-3">
-      <h2 className="text-white font-semibold">오늘의 활동 기록</h2>
+    <form onSubmit={handleSubmit} className="space-y-2">
+      {error && <p className="text-red-400 text-xs px-1">{error}</p>}
 
-      <input
-        name="title"
-        type="text"
-        placeholder="무엇을 했나요? (예: 운동 30분, 책 읽기)"
-        required
-        autoFocus
-        className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-md text-white placeholder-[#8B949E] focus:outline-none focus:border-[#388BFD] text-sm"
-      />
+      {/* 한 줄 통합 입력창 */}
+      <div className="flex items-center gap-2 bg-[#161B22] border border-[#30363D] rounded-xl px-4 py-2.5 focus-within:border-[#388BFD] transition-colors">
+        {/* 카테고리 태그들 */}
+        {selectedCategory.map((name) => {
+          const color = getCategoryColor(name)
+          return (
+            <span
+              key={name}
+              className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full shrink-0 border"
+              style={{ backgroundColor: color.bg, color: color.text, borderColor: color.border }}
+            >
+              {name}
+              <button
+                type="button"
+                onClick={() => setSelectedCategory((prev) => prev.filter((c) => c !== name))}
+                className="hover:opacity-70 leading-none"
+              >×</button>
+            </span>
+          )
+        })}
 
-      <div className="flex gap-2">
-        <CategoryInput
-          categories={categories}
-          selected={selectedCategory}
-          onChange={setSelectedCategory}
-        />
-        <input
-          name="activity_date"
-          type="date"
-          defaultValue={today}
+        {/* 텍스트 입력 */}
+        <textarea
+          name="title"
+          rows={1}
+          placeholder="오늘 무엇을 했나요?"
           required
-          className="px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-md text-white focus:outline-none focus:border-[#388BFD] text-sm"
+          autoFocus
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault()
+              if (!loading) e.target.form.requestSubmit()
+            }
+          }}
+          onChange={(e) => {
+            e.target.style.height = 'auto'
+            e.target.style.height = e.target.scrollHeight + 'px'
+          }}
+          className="flex-1 bg-transparent text-white placeholder-[#8B949E] focus:outline-none text-sm min-w-0 resize-none leading-tight overflow-hidden"
         />
+
+        {/* 카테고리 선택 */}
+        <div className="shrink-0">
+          <CategoryInput
+            categories={categories}
+            selected={selectedCategory}
+            onChange={setSelectedCategory}
+            compact
+          />
+        </div>
+
+        {/* 기록 버튼 */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-3 py-1.5 bg-[#238636] hover:bg-[#2ea043] disabled:opacity-50 text-white rounded-lg text-sm font-medium transition-colors shrink-0"
+        >
+          {loading ? '...' : '기록'}
+        </button>
       </div>
-
-      {error && <p className="text-red-400 text-sm">{error}</p>}
-
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full py-2 bg-[#238636] hover:bg-[#2ea043] disabled:opacity-50 text-white rounded-md text-sm font-medium transition-colors"
-      >
-        {loading ? '저장 중...' : '기록하기'}
-      </button>
     </form>
   )
 }

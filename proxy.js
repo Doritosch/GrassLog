@@ -27,8 +27,8 @@ export async function proxy(request) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  // 로그인 안 된 사용자가 /dashboard 접근 시 /login으로 리디렉트
-  if (!user && request.nextUrl.pathname.startsWith('/dashboard')) {
+  // 로그인 안 된 사용자가 보호된 페이지 접근 시 /login으로 리디렉트
+  if (!user && (request.nextUrl.pathname.startsWith('/dashboard') || request.nextUrl.pathname.startsWith('/grass'))) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
@@ -45,5 +45,5 @@ export async function proxy(request) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/login'],
+  matcher: ['/dashboard/:path*', '/grass/:path*', '/login'],
 }
