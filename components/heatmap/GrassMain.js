@@ -3,8 +3,8 @@
 import { useMain } from '@/components/providers/MainProvider'
 import HeatmapInteractive from './HeatmapInteractive'
 
-export default function GrassMain({ email }) {
-  const { activities } = useMain()
+export default function GrassMain() {
+  const { activities, email } = useMain()
 
   return (
     <>

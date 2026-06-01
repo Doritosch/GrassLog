@@ -25,7 +25,7 @@ export default async function MainLayout({ children }) {
   ])
 
   return (
-    <MainProvider activities={activities || []} categories={categories || []}>
+    <MainProvider activities={activities || []} categories={categories || []} email={user.email}>
       <div className="flex h-screen bg-[#0D1117]">
         <SidebarWrapper />
         <div className="flex-1 flex flex-col h-screen overflow-hidden">

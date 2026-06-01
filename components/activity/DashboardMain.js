@@ -5,8 +5,8 @@ import RecentActivityList from './RecentActivityList'
 import ActivityForm from './ActivityForm'
 import DateHeader from './DateHeader'
 
-export default function DashboardMain({ email }) {
-  const { activities, categories, selectedDate } = useMain()
+export default function DashboardMain() {
+  const { activities, categories, selectedDate, email } = useMain()
 
   return (
     <>
