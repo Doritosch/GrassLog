@@ -1,20 +1,32 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import ActivityForm from '@/components/activity/ActivityForm'
+import RecentActivityList from '@/components/activity/RecentActivityList'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) {
-    redirect('/login')
-  }
+  if (!user) redirect('/login')
+
+  const { data: activities } = await supabase
+    .from('activity_log')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('activity_date', { ascending: false })
+    .order('created_at', { ascending: false })
+    .limit(10)
 
   return (
-    <main className="min-h-screen bg-[#0D1117] flex items-center justify-center px-4">
-      <div className="text-center space-y-4">
-        <h1 className="text-2xl font-bold text-white">대시보드</h1>
-        <p className="text-[#8B949E]">안녕하세요, {user.email}</p>
-        <p className="text-[#3FB950] text-sm">로그인 성공! 🎉</p>
+    <main className="min-h-screen bg-[#0D1117] px-4 py-8">
+      <div className="max-w-2xl mx-auto space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-white font-bold text-xl">GrassLog</h1>
+          <span className="text-[#8B949E] text-sm">{user.email}</span>
+        </div>
+
+        <ActivityForm />
+        <RecentActivityList activities={activities || []} />
       </div>
     </main>
   )
