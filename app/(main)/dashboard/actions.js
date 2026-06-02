@@ -65,6 +65,30 @@ export async function createActivity(formData) {
   return { success: true }
 }
 
+export async function updateActivity(id, { title, category_name }) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) return { error: '로그인이 필요합니다.' }
+
+  const trimmedTitle = title?.toString().trim() || null
+  if (trimmedTitle && trimmedTitle.length > TITLE_MAX) return { error: `${TITLE_MAX}자 이내로 입력해주세요.` }
+
+  const { error } = await supabase
+    .from('activity_log')
+    .update({ title: trimmedTitle, category_name: category_name || null })
+    .eq('id', id)
+    .eq('user_id', user.id)
+
+  if (error) {
+    console.error('[updateActivity]', { code: error.code, userId: user.id })
+    return { error: '수정하지 못했어요. 잠시 후 다시 시도해주세요.' }
+  }
+
+  revalidatePath('/dashboard')
+  return { success: true }
+}
+
 export async function deleteActivity(id) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
