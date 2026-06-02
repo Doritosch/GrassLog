@@ -2,8 +2,19 @@
 
 import { createClient } from '@/lib/supabase/client'
 
+function isKakaoInAppBrowser() {
+  if (typeof navigator === 'undefined') return false
+  return /KAKAOTALK/i.test(navigator.userAgent)
+}
+
 export default function LoginPage() {
   const handleGoogleLogin = async () => {
+    if (isKakaoInAppBrowser()) {
+      const cleanUrl = `${window.location.origin}/login`
+      window.location.href = `kakaotalk://web/openExternal?url=${encodeURIComponent(cleanUrl)}`
+      return
+    }
+
     const supabase = createClient()
     await supabase.auth.signInWithOAuth({
       provider: 'google',
