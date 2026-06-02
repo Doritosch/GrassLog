@@ -65,18 +65,47 @@ export async function createActivity(formData) {
   return { success: true }
 }
 
-export async function updateActivity(id, { title, category_name }) {
+export async function updateActivity(id, formData) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) return { error: '로그인이 필요합니다.' }
 
-  const trimmedTitle = title?.toString().trim() || null
-  if (trimmedTitle && trimmedTitle.length > TITLE_MAX) return { error: `${TITLE_MAX}자 이내로 입력해주세요.` }
+  const title = formData.get('title')?.toString().trim() || null
+  const category_name = formData.get('category_name')?.toString().trim() || null
+  const removeImage = formData.get('remove_image') === 'true'
+  const imageFile = formData.get('image')
+  const hasNewImage = imageFile && imageFile.size > 0
+
+  if (!title && !hasNewImage && removeImage) return { error: '활동 내용을 입력하거나 이미지를 첨부해주세요.' }
+  if (title && title.length > TITLE_MAX) return { error: `${TITLE_MAX}자 이내로 입력해주세요.` }
+
+  let image_url = undefined
+
+  if (hasNewImage) {
+    if (!ALLOWED_TYPES.includes(imageFile.type)) return { error: '이미지 파일만 업로드할 수 있어요.' }
+    if (imageFile.size > IMAGE_MAX_BYTES) return { error: '이미지는 5MB 이하만 업로드할 수 있어요.' }
+    const ext = imageFile.name.split('.').pop()
+    const path = `${user.id}/${Date.now()}.${ext}`
+    const { error: uploadError } = await supabase.storage
+      .from('activity-images')
+      .upload(path, imageFile, { contentType: imageFile.type })
+    if (uploadError) {
+      console.error('[updateActivity] upload', { code: uploadError.message, userId: user.id })
+      return { error: '이미지 업로드에 실패했어요. 잠시 후 다시 시도해주세요.' }
+    }
+    const { data: { publicUrl } } = supabase.storage.from('activity-images').getPublicUrl(path)
+    image_url = publicUrl
+  } else if (removeImage) {
+    image_url = null
+  }
+
+  const updates = { title, category_name: category_name || null }
+  if (image_url !== undefined) updates.image_url = image_url
 
   const { error } = await supabase
     .from('activity_log')
-    .update({ title: trimmedTitle, category_name: category_name || null })
+    .update(updates)
     .eq('id', id)
     .eq('user_id', user.id)
 

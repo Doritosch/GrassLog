@@ -1,49 +1,80 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { createActivity } from '@/app/(main)/dashboard/actions'
+import { useState, useRef, useEffect } from 'react'
+import { createActivity, updateActivity } from '@/app/(main)/dashboard/actions'
 import CategoryInput from './CategoryInput'
 import { getCategoryColor } from '@/lib/category-colors'
 import { toKSTDateStr } from '@/lib/date/kst'
+import { useMain } from '@/components/providers/MainProvider'
 
 export default function ActivityForm({ categories }) {
+  const { editingActivity, setEditingActivity, markEdited } = useMain()
+  const isEditing = !!editingActivity
+
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState([])
   const [imageFile, setImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
+  const [keepExistingImage, setKeepExistingImage] = useState(true)
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef(null)
+  const textareaRef = useRef(null)
+
+  useEffect(() => {
+    if (editingActivity) {
+      setSelectedCategory(
+        editingActivity.category_name
+          ? editingActivity.category_name.split(', ').filter(Boolean)
+          : []
+      )
+      setImageFile(null)
+      setImagePreview(editingActivity.image_url || null)
+      setKeepExistingImage(!!editingActivity.image_url)
+      setError('')
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.value = editingActivity.title || ''
+          textareaRef.current.style.height = 'auto'
+          textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'
+          textareaRef.current.focus()
+        }
+      }, 0)
+    } else {
+      setSelectedCategory([])
+      setImageFile(null)
+      setImagePreview(null)
+      setKeepExistingImage(true)
+      setError('')
+      if (textareaRef.current) {
+        textareaRef.current.value = ''
+        textareaRef.current.style.height = 'auto'
+      }
+    }
+  }, [editingActivity])
 
   const applyImage = (file) => {
     if (!file || !file.type.startsWith('image/')) return
     setImageFile(file)
     setImagePreview(URL.createObjectURL(file))
+    setKeepExistingImage(false)
   }
 
-  const handleImageChange = (e) => {
-    applyImage(e.target.files?.[0])
-  }
+  const handleImageChange = (e) => applyImage(e.target.files?.[0])
 
-  const handleDragOver = (e) => {
-    e.preventDefault()
-    setIsDragging(true)
-  }
-
-  const handleDragLeave = (e) => {
-    if (!e.currentTarget.contains(e.relatedTarget)) setIsDragging(false)
-  }
-
-  const handleDrop = (e) => {
-    e.preventDefault()
-    setIsDragging(false)
-    applyImage(e.dataTransfer.files?.[0])
-  }
+  const handleDragOver = (e) => { e.preventDefault(); setIsDragging(true) }
+  const handleDragLeave = (e) => { if (!e.currentTarget.contains(e.relatedTarget)) setIsDragging(false) }
+  const handleDrop = (e) => { e.preventDefault(); setIsDragging(false); applyImage(e.dataTransfer.files?.[0]) }
 
   const removeImage = () => {
     setImageFile(null)
     setImagePreview(null)
+    setKeepExistingImage(false)
     if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  const handleCancel = () => {
+    setEditingActivity(null)
   }
 
   const handleSubmit = async (e) => {
@@ -53,30 +84,54 @@ export default function ActivityForm({ categories }) {
 
     const formData = new FormData(e.target)
     formData.set('category_name', selectedCategory.join(', '))
-    formData.set('activity_date', toKSTDateStr())
-    if (imageFile) formData.set('image', imageFile)
 
-    const result = await createActivity(formData)
+    let result
+    if (isEditing) {
+      formData.set('remove_image', (!keepExistingImage && !imageFile) ? 'true' : 'false')
+      if (imageFile) formData.set('image', imageFile)
+      result = await updateActivity(editingActivity.id, formData)
+    } else {
+      formData.set('activity_date', toKSTDateStr())
+      if (imageFile) formData.set('image', imageFile)
+      result = await createActivity(formData)
+    }
 
     if (result?.error) {
       setError(result.error)
     } else {
-      e.target.reset()
-      setSelectedCategory([])
-      setImageFile(null)
-      setImagePreview(null)
+      if (isEditing) markEdited(editingActivity.id)
+      setEditingActivity(null)
+      if (!isEditing) {
+        e.target.reset()
+        setSelectedCategory([])
+        setImageFile(null)
+        setImagePreview(null)
+      }
     }
     setLoading(false)
   }
 
+  const existingImageUrl = isEditing && keepExistingImage && !imageFile ? editingActivity?.image_url : null
+
   return (
     <form onSubmit={handleSubmit} className="space-y-2">
+      {isEditing && (
+        <div className="flex items-center gap-2 px-1">
+          <span style={{ color: 'var(--accent)' }} className="text-xs font-medium">수정 중</span>
+          <button type="button" onClick={handleCancel} style={{ color: 'var(--text-muted)' }} className="text-xs hover:opacity-80">취소</button>
+        </div>
+      )}
       {error && <p className="text-red-400 text-xs px-1">{error}</p>}
 
       {/* 이미지 미리보기 */}
-      {imagePreview && (
+      {(imagePreview || existingImageUrl) && (
         <div className="relative inline-block">
-          <img src={imagePreview} alt="미리보기" className="h-20 rounded-lg object-cover border" style={{ borderColor: 'var(--border)' }} />
+          <img
+            src={imageFile ? imagePreview : existingImageUrl || imagePreview}
+            alt="미리보기"
+            className="h-20 rounded-lg object-cover border"
+            style={{ borderColor: 'var(--border)' }}
+          />
           <button
             type="button"
             onClick={removeImage}
@@ -86,11 +141,11 @@ export default function ActivityForm({ categories }) {
         </div>
       )}
 
-      {/* 한 줄 통합 입력창 */}
+      {/* 입력창 */}
       <div
         style={{
           background: isDragging ? 'var(--bg-elevated)' : 'var(--bg-surface)',
-          borderColor: isDragging ? 'var(--link)' : 'var(--border)',
+          borderColor: isEditing ? 'var(--accent)' : isDragging ? 'var(--link)' : 'var(--border)',
         }}
         className="flex items-center gap-2 border rounded-xl px-4 py-2.5 focus-within:border-[var(--link)] transition-colors"
         onDragOver={handleDragOver}
@@ -118,15 +173,17 @@ export default function ActivityForm({ categories }) {
 
         {/* 텍스트 입력 */}
         <textarea
+          ref={textareaRef}
           name="title"
           rows={1}
-          placeholder="오늘 무엇을 했나요?"
-          required={!imageFile}
+          placeholder={isEditing ? '활동 내용을 수정하세요' : '오늘 무엇을 했나요?'}
+          required={!imageFile && !existingImageUrl}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault()
               if (!loading) e.target.form.requestSubmit()
             }
+            if (e.key === 'Escape' && isEditing) handleCancel()
           }}
           onChange={(e) => {
             e.target.style.height = 'auto'
@@ -168,14 +225,14 @@ export default function ActivityForm({ categories }) {
           />
         </div>
 
-        {/* 기록 버튼 */}
+        {/* 저장 버튼 */}
         <button
           type="submit"
           disabled={loading}
           style={{ background: 'var(--accent)' }}
           className="px-3 py-1.5 hover:opacity-90 disabled:opacity-50 text-white rounded-lg text-sm font-medium transition-opacity shrink-0"
         >
-          {loading ? '...' : '기록'}
+          {loading ? '...' : isEditing ? '저장' : '기록'}
         </button>
       </div>
     </form>
