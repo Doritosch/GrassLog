@@ -15,7 +15,7 @@ export default function RecentActivityList({ activities, selectedDate }) {
 
   useEffect(() => {
     if (highlightId && highlightRef.current) {
-      highlightRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      highlightRef.current.scrollIntoView({ behavior: 'instant', block: 'center' })
     }
   }, [highlightId])
 
