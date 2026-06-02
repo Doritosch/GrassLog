@@ -1,15 +1,17 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { deleteActivity } from '@/app/(main)/dashboard/actions'
 import { getCategoryColor } from '@/lib/category-colors'
 import { useMain } from '@/components/providers/MainProvider'
 import { toKSTDateStr } from '@/lib/date/kst'
 import { parseImageUrls } from '@/lib/image-urls'
+import ImageLightbox from '@/components/ui/ImageLightbox'
 
 export default function RecentActivityList({ activities, selectedDate }) {
   const { highlightId, editedIds, setEditingActivity } = useMain()
   const highlightRef = useRef(null)
+  const [lightboxSrc, setLightboxSrc] = useState(null)
   const today = toKSTDateStr()
   const activeDate = selectedDate || today
 
@@ -39,6 +41,7 @@ export default function RecentActivityList({ activities, selectedDate }) {
 
   return (
     <div>
+      {lightboxSrc && <ImageLightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />}
       <div className="space-y-0.5">
         {filtered.map((activity) => {
           const cats = activity.category_name
@@ -81,7 +84,7 @@ export default function RecentActivityList({ activities, selectedDate }) {
                           alt="첨부 이미지"
                           className="max-w-xs max-h-64 w-auto h-auto rounded-lg object-contain border cursor-pointer"
                           style={{ borderColor: 'var(--border)' }}
-                          onClick={() => window.open(url, '_blank')}
+                          onClick={() => setLightboxSrc(url)}
                         />
                       ))}
                     </div>

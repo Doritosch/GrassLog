@@ -7,7 +7,7 @@ import RecentActivityList from './RecentActivityList'
 import ActivityForm from './ActivityForm'
 import TopBar from '@/components/layout/TopBar'
 import MobileDateChips from './MobileDateChips'
-import OnboardingModal from './OnboardingModal'
+import OnboardingTour from './OnboardingTour'
 import SearchModal from './SearchModal'
 
 function formatDate(dateStr) {
@@ -32,7 +32,7 @@ export default function DashboardMain() {
 
   return (
     <>
-      <OnboardingModal />
+      <OnboardingTour />
       {searchOpen && (
         <SearchModal
           onClose={() => setSearchOpen(false)}

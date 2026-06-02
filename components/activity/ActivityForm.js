@@ -157,6 +157,7 @@ export default function ActivityForm({ categories }) {
 
       {/* 입력창 */}
       <div
+        data-tour="tour-input"
         style={{
           background: isDragging ? 'var(--bg-elevated)' : 'var(--bg-surface)',
           borderColor: isEditing ? 'var(--accent)' : isDragging ? 'var(--link)' : 'var(--border)',
@@ -211,6 +212,7 @@ export default function ActivityForm({ categories }) {
         {totalImageCount < 5 && (
           <button
             type="button"
+            data-tour="tour-image"
             onClick={() => fileInputRef.current?.click()}
             style={{ color: 'var(--text-muted)' }}
             className="hover:opacity-80 transition-opacity shrink-0 cursor-pointer"
@@ -233,7 +235,7 @@ export default function ActivityForm({ categories }) {
         />
 
         {/* 카테고리 선택 */}
-        <div className="shrink-0">
+        <div className="shrink-0" data-tour="tour-category">
           <CategoryInput
             categories={categories}
             selected={selectedCategory}

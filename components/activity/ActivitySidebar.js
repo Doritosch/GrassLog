@@ -96,6 +96,7 @@ export default function ActivitySidebar({ activities, selectedDate, onSelectDate
           <Link
             key={href}
             href={href}
+            data-tour={href === '/grass' ? 'tour-nav-grass' : undefined}
             style={{
               color: pathname === href ? 'var(--text-primary)' : 'var(--text-muted)',
               background: pathname === href ? 'var(--bg-elevated)' : 'transparent',
@@ -111,7 +112,7 @@ export default function ActivitySidebar({ activities, selectedDate, onSelectDate
 
       {/* 날짜 목록 */}
       {open && (
-        <div style={{ borderColor: 'var(--border)' }} className="flex-1 overflow-y-auto py-2 scrollbar-dark border-t">
+        <div data-tour="tour-sidebar-dates" style={{ borderColor: 'var(--border)' }} className="flex-1 overflow-y-auto py-2 scrollbar-dark border-t">
           {sortedDates.length === 0 ? (
             <p style={{ color: 'var(--text-muted)' }} className="text-xs px-4 py-3">아직 기록이 없어요.</p>
           ) : (
