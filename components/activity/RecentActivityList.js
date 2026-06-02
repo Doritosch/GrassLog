@@ -36,29 +36,39 @@ export default function RecentActivityList({ activities, selectedDate }) {
           return (
             <div
               key={activity.id}
-              className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#161B22] group transition-colors"
+              className="flex items-start gap-3 px-3 py-2 rounded-md hover:bg-[#161B22] group transition-colors"
             >
-              <div className="flex items-center gap-2 min-w-0 flex-1">
-                <div className="flex gap-1 shrink-0 md:min-w-[60px]">
-                  {categories.length > 0 ? categories.map((cat) => {
-                    const color = getCategoryColor(cat)
-                    return (
-                      <span
-                        key={cat}
-                        className="text-xs px-2 py-0.5 rounded-full border"
-                        style={{ backgroundColor: color.bg, color: color.text, borderColor: color.border }}
-                      >
-                        {cat}
-                      </span>
-                    )
-                  }) : <span className="inline-block" />}
+              <div className="flex flex-col gap-1.5 min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1 shrink-0 md:min-w-[60px]">
+                    {categories.length > 0 ? categories.map((cat) => {
+                      const color = getCategoryColor(cat)
+                      return (
+                        <span
+                          key={cat}
+                          className="text-xs px-2 py-0.5 rounded-full border"
+                          style={{ backgroundColor: color.bg, color: color.text, borderColor: color.border }}
+                        >
+                          {cat}
+                        </span>
+                      )
+                    }) : <span className="inline-block" />}
+                  </div>
+                  <p className="text-[#C9D1D9] text-sm whitespace-pre-wrap break-words">{activity.title}</p>
                 </div>
-                <p className="text-[#C9D1D9] text-sm whitespace-pre-wrap break-words">{activity.title}</p>
+                {activity.image_url && (
+                  <img
+                    src={activity.image_url}
+                    alt="첨부 이미지"
+                    className="h-32 w-auto rounded-lg object-cover border border-[#30363D] cursor-pointer"
+                    onClick={() => window.open(activity.image_url, '_blank')}
+                  />
+                )}
               </div>
 
               <button
                 onClick={() => deleteActivity(activity.id)}
-                className="text-[#8B949E] hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all text-xs shrink-0"
+                className="text-[#8B949E] hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all text-xs shrink-0 mt-0.5"
               >
                 삭제
               </button>
