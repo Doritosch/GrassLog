@@ -68,13 +68,18 @@ export default function RecentActivityList({ activities, selectedDate }) {
                 )}
               </div>
 
-              <button
-                onClick={() => deleteActivity(activity.id)}
-                style={{ color: 'var(--text-muted)' }}
-                className="hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all text-xs shrink-0 mt-0.5"
-              >
-                삭제
-              </button>
+              <div className="flex flex-col items-end gap-1 shrink-0">
+                <span style={{ color: 'var(--text-muted)' }} className="text-[10px]">
+                  {new Date(activity.created_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                </span>
+                <button
+                  onClick={() => deleteActivity(activity.id)}
+                  style={{ color: 'var(--text-muted)' }}
+                  className="hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all text-xs"
+                >
+                  삭제
+                </button>
+              </div>
             </div>
           )
         })}
