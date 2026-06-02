@@ -30,6 +30,10 @@
 # oh-my-claudecode
 .omc/
 
+# claude
+CLAUDE.md
+AGENTS.md
+
 # debug
 npm-debug.log*
 yarn-debug.log*
