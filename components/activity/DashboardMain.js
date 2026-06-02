@@ -1,11 +1,13 @@
 'use client'
 
+import { useState } from 'react'
 import { useMain } from '@/components/providers/MainProvider'
 import RecentActivityList from './RecentActivityList'
 import ActivityForm from './ActivityForm'
 import TopBar from '@/components/layout/TopBar'
 import MobileDateChips from './MobileDateChips'
 import OnboardingModal from './OnboardingModal'
+import SearchModal from './SearchModal'
 
 function formatDate(dateStr) {
   const date = new Date(dateStr + 'T00:00:00')
@@ -18,12 +20,19 @@ function formatDate(dateStr) {
 }
 
 export default function DashboardMain() {
-  const { activities, categories, selectedDate, email } = useMain()
+  const { activities, categories, selectedDate, setSelectedDate, email } = useMain()
+  const [searchOpen, setSearchOpen] = useState(false)
 
   return (
     <>
       <OnboardingModal />
-      <TopBar title={formatDate(selectedDate)} email={email} />
+      {searchOpen && (
+        <SearchModal
+          onClose={() => setSearchOpen(false)}
+          onSelectDate={(date) => { setSelectedDate(date); setSearchOpen(false) }}
+        />
+      )}
+      <TopBar title={formatDate(selectedDate)} email={email} onSearchOpen={() => setSearchOpen(true)} />
       <MobileDateChips />
 
       <div className="flex-1 overflow-y-auto px-6 py-4 scrollbar-dark">

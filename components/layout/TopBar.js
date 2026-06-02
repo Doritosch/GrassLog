@@ -16,7 +16,13 @@ const IconMoon = () => (
   </svg>
 )
 
-export default function TopBar({ title, email }) {
+const IconSearch = () => (
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.099zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+  </svg>
+)
+
+export default function TopBar({ title, email, onSearchOpen }) {
   const router = useRouter()
   const { theme, toggleTheme } = useTheme()
 
@@ -27,10 +33,20 @@ export default function TopBar({ title, email }) {
   }
 
   return (
-    <div style={{ borderColor: 'var(--border)' }} className="px-6 py-4 border-b flex items-center justify-between shrink-0" >
+    <div style={{ borderColor: 'var(--border)' }} className="px-6 py-4 border-b flex items-center justify-between shrink-0">
       <h1 style={{ color: 'var(--text-primary)' }} className="font-bold">{title}</h1>
       <div className="flex items-center gap-3">
-        <span style={{ color: 'var(--text-muted)' }} className="text-sm">{email}</span>
+        <span style={{ color: 'var(--text-muted)' }} className="text-sm hidden md:block">{email}</span>
+        {onSearchOpen && (
+          <button
+            onClick={onSearchOpen}
+            style={{ color: 'var(--text-muted)', borderColor: 'var(--border)' }}
+            className="hover:opacity-80 border px-2 py-1 rounded-md transition-opacity flex items-center gap-1"
+            title="검색"
+          >
+            <IconSearch />
+          </button>
+        )}
         <button
           onClick={toggleTheme}
           style={{ color: 'var(--text-muted)', borderColor: 'var(--border)' }}
