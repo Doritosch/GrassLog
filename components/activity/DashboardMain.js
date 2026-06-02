@@ -5,6 +5,7 @@ import RecentActivityList from './RecentActivityList'
 import ActivityForm from './ActivityForm'
 import TopBar from '@/components/layout/TopBar'
 import MobileDateChips from './MobileDateChips'
+import OnboardingModal from './OnboardingModal'
 
 function formatDate(dateStr) {
   const date = new Date(dateStr + 'T00:00:00')
@@ -21,6 +22,7 @@ export default function DashboardMain() {
 
   return (
     <>
+      <OnboardingModal />
       <TopBar title={formatDate(selectedDate)} email={email} />
       <MobileDateChips />
 

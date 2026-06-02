@@ -57,12 +57,14 @@ export default function RecentActivityList({ activities, selectedDate }) {
                   <p className="text-[#C9D1D9] text-sm whitespace-pre-wrap break-words">{activity.title}</p>
                 </div>
                 {activity.image_url && (
-                  <img
-                    src={activity.image_url}
-                    alt="첨부 이미지"
-                    className="max-h-48 w-auto max-w-full rounded-lg object-contain border border-[#30363D] cursor-pointer"
-                    onClick={() => window.open(activity.image_url, '_blank')}
-                  />
+                  <div className="w-fit">
+                    <img
+                      src={activity.image_url}
+                      alt="첨부 이미지"
+                      className="max-h-48 max-w-full rounded-lg object-contain border border-[#30363D] cursor-pointer"
+                      onClick={() => window.open(activity.image_url, '_blank')}
+                    />
+                  </div>
                 )}
               </div>
 
