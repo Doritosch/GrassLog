@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { deleteActivity, updateActivity } from '@/app/(main)/dashboard/actions'
 import { getCategoryColor } from '@/lib/category-colors'
 import { useMain } from '@/components/providers/MainProvider'
+import { toKSTDateStr } from '@/lib/date/kst'
 
 function InlineEditor({ activity, categories, onClose }) {
   const [title, setTitle] = useState(activity.title || '')
@@ -103,7 +104,7 @@ export default function RecentActivityList({ activities, selectedDate }) {
   const { highlightId, categories } = useMain()
   const [editingId, setEditingId] = useState(null)
   const highlightRef = useRef(null)
-  const today = new Date().toISOString().split('T')[0]
+  const today = toKSTDateStr()
   const activeDate = selectedDate || today
 
   const filtered = activities.filter((a) => a.activity_date === activeDate)

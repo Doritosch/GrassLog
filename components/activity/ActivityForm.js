@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { createActivity } from '@/app/(main)/dashboard/actions'
 import CategoryInput from './CategoryInput'
 import { getCategoryColor } from '@/lib/category-colors'
+import { toKSTDateStr } from '@/lib/date/kst'
 
 export default function ActivityForm({ categories }) {
   const [error, setError] = useState('')
@@ -52,8 +53,7 @@ export default function ActivityForm({ categories }) {
 
     const formData = new FormData(e.target)
     formData.set('category_name', selectedCategory.join(', '))
-    const today = new Date().toISOString().split('T')[0]
-    formData.set('activity_date', today)
+    formData.set('activity_date', toKSTDateStr())
     if (imageFile) formData.set('image', imageFile)
 
     const result = await createActivity(formData)

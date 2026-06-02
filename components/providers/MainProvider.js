@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState } from 'react'
+import { toKSTDateStr } from '@/lib/date/kst'
 
 const MainContext = createContext(null)
 
@@ -9,7 +10,7 @@ export function useMain() {
 }
 
 export default function MainProvider({ children, activities, categories, email }) {
-  const today = new Date().toISOString().split('T')[0]
+  const today = toKSTDateStr()
   const [selectedDate, setSelectedDate] = useState(today)
   const [highlightId, setHighlightId] = useState(null)
 

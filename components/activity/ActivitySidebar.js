@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import { toKSTDateStr } from '@/lib/date/kst'
 
 const IconDashboard = () => (
   <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
@@ -30,19 +31,22 @@ export default function ActivitySidebar({ activities, selectedDate, onSelectDate
   const [open, setOpen] = useState(true)
   const pathname = usePathname()
 
+  const todayStr = toKSTDateStr()
+
   const dateCounts = activities.reduce((acc, activity) => {
     const date = activity.activity_date
     acc[date] = (acc[date] || 0) + 1
     return acc
   }, {})
 
+  if (!dateCounts[todayStr]) dateCounts[todayStr] = 0
+
   const sortedDates = Object.keys(dateCounts).sort((a, b) => b.localeCompare(a))
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr + 'T00:00:00')
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    const diff = Math.floor((today - date) / (1000 * 60 * 60 * 24))
+    const todayStr = toKSTDateStr()
+    const diff = Math.floor((new Date(todayStr) - date) / (1000 * 60 * 60 * 24))
     if (diff === 0) return '오늘'
     if (diff === 1) return '어제'
     return `${date.getMonth() + 1}월 ${date.getDate()}일`

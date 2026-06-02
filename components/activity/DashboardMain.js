@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useMain } from '@/components/providers/MainProvider'
+import { toKSTDateStr } from '@/lib/date/kst'
 import RecentActivityList from './RecentActivityList'
 import ActivityForm from './ActivityForm'
 import TopBar from '@/components/layout/TopBar'
@@ -11,9 +12,8 @@ import SearchModal from './SearchModal'
 
 function formatDate(dateStr) {
   const date = new Date(dateStr + 'T00:00:00')
-  const todayDate = new Date()
-  todayDate.setHours(0, 0, 0, 0)
-  const diff = Math.floor((todayDate - date) / (1000 * 60 * 60 * 24))
+  const todayStr = toKSTDateStr()
+  const diff = Math.floor((new Date(todayStr) - date) / (1000 * 60 * 60 * 24))
   if (diff === 0) return '오늘'
   if (diff === 1) return '어제'
   return `${date.getMonth() + 1}월 ${date.getDate()}일`

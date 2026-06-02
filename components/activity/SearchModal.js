@@ -3,12 +3,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { useMain } from '@/components/providers/MainProvider'
 import { getCategoryColor } from '@/lib/category-colors'
+import { toKSTDateStr } from '@/lib/date/kst'
 
 function formatDate(dateStr) {
   const date = new Date(dateStr + 'T00:00:00')
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const diff = Math.floor((today - date) / (1000 * 60 * 60 * 24))
+  const todayStr = toKSTDateStr()
+  const diff = Math.floor((new Date(todayStr) - date) / (1000 * 60 * 60 * 24))
   if (diff === 0) return '오늘'
   if (diff === 1) return '어제'
   return `${date.getMonth() + 1}월 ${date.getDate()}일`
