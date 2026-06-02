@@ -119,6 +119,7 @@ export default function HeatmapInteractive({ activities = [], theme = 'green' })
                 const bucket = cell.inRange ? countToBucket(count) : -1
                 const bgColor = bucket >= 0 ? colors[bucket] : 'transparent'
                 const isSelected = selected === cell.date
+                const isToday = cell.date === new Date().toLocaleDateString('sv-SE')
                 return (
                   <div
                     key={wi}
@@ -128,7 +129,7 @@ export default function HeatmapInteractive({ activities = [], theme = 'green' })
                       borderRadius: Math.max(2, cellSize / 5),
                       flexShrink: 0,
                       cursor: cell.inRange ? 'pointer' : 'default',
-                      outline: isSelected ? '2px solid #58a6ff' : 'none',
+                      outline: isSelected ? '2px solid #58a6ff' : isToday ? '2px solid #c9d1d9' : 'none',
                       outlineOffset: 1,
                       border: cell.inRange ? '1px solid rgba(255,255,255,0.06)' : 'none',
                       boxSizing: 'border-box',
