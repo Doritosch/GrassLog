@@ -16,7 +16,7 @@ export async function createActivity(formData) {
 
   if (!user) return { error: '로그인이 필요합니다.' }
 
-  const title = formData.get('title')?.toString().trim()
+  const title = formData.get('title')?.toString().trim() || null
   const category_name = formData.get('category_name')?.toString().trim() || null
   const activity_date = formData.get('activity_date')?.toString()
   const imageFile = formData.get('image')
