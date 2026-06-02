@@ -38,33 +38,29 @@ export default function RecentActivityList({ activities, selectedDate }) {
               key={activity.id}
               className="flex items-start gap-3 px-3 py-2 rounded-md hover:bg-[#161B22] group transition-colors"
             >
-              <div className="flex flex-col gap-1.5 min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <div className="flex gap-1 shrink-0 md:min-w-[60px]">
-                    {categories.length > 0 ? categories.map((cat) => {
-                      const color = getCategoryColor(cat)
-                      return (
-                        <span
-                          key={cat}
-                          className="text-xs px-2 py-0.5 rounded-full border"
-                          style={{ backgroundColor: color.bg, color: color.text, borderColor: color.border }}
-                        >
-                          {cat}
-                        </span>
-                      )
-                    }) : <span className="inline-block" />}
-                  </div>
-                  <p className="text-[#C9D1D9] text-sm whitespace-pre-wrap break-words">{activity.title}</p>
+              <div className="flex items-start gap-2 min-w-0 flex-1">
+                <div className="flex gap-1 shrink-0 md:min-w-[60px]">
+                  {categories.length > 0 ? categories.map((cat) => {
+                    const color = getCategoryColor(cat)
+                    return (
+                      <span
+                        key={cat}
+                        className="text-xs px-2 py-0.5 rounded-full border"
+                        style={{ backgroundColor: color.bg, color: color.text, borderColor: color.border }}
+                      >
+                        {cat}
+                      </span>
+                    )
+                  }) : <span className="inline-block" />}
                 </div>
+                <p className="text-[#C9D1D9] text-sm whitespace-pre-wrap break-words min-w-0 flex-1">{activity.title}</p>
                 {activity.image_url && (
-                  <div className="w-fit">
-                    <img
-                      src={activity.image_url}
-                      alt="첨부 이미지"
-                      className="max-h-48 max-w-full rounded-lg object-contain border border-[#30363D] cursor-pointer"
-                      onClick={() => window.open(activity.image_url, '_blank')}
-                    />
-                  </div>
+                  <img
+                    src={activity.image_url}
+                    alt="첨부 이미지"
+                    className="max-h-12 w-auto rounded object-contain border border-[#30363D] cursor-pointer shrink-0"
+                    onClick={() => window.open(activity.image_url, '_blank')}
+                  />
                 )}
               </div>
 
