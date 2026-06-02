@@ -70,7 +70,7 @@ export default function RecentActivityList({ activities, selectedDate }) {
 
               <div className="flex flex-col items-end gap-1 shrink-0">
                 <span style={{ color: 'var(--text-muted)' }} className="text-[10px]">
-                  {new Date(activity.created_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                  {new Date(activity.created_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: true })}
                 </span>
                 <button
                   onClick={() => deleteActivity(activity.id)}
