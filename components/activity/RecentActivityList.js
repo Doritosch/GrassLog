@@ -53,7 +53,7 @@ export default function RecentActivityList({ activities, selectedDate }) {
                     )
                   }) : <span className="inline-block" />}
                 </div>
-                <p className="text-[#C9D1D9] text-sm whitespace-pre-wrap break-words min-w-0 flex-1">{activity.title}</p>
+                <p className="text-[#C9D1D9] text-sm whitespace-pre-wrap break-words min-w-0">{activity.title}</p>
                 {activity.image_url && (
                   <img
                     src={activity.image_url}
