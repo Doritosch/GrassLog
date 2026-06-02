@@ -2,13 +2,32 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { parseImageUrls, serializeImageUrls } from '@/lib/image-urls'
 
 const TITLE_MAX = 2000
 const CAT_MAX = 40
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
 
-const IMAGE_MAX_BYTES = 5 * 1024 * 1024 // 5MB
+const IMAGE_MAX_BYTES = 5 * 1024 * 1024
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+const IMAGE_MAX_COUNT = 5
+
+async function uploadImages(supabase, userId, files) {
+  const urls = []
+  for (const file of files) {
+    if (!ALLOWED_TYPES.includes(file.type)) return { error: '이미지 파일만 업로드할 수 있어요.' }
+    if (file.size > IMAGE_MAX_BYTES) return { error: '이미지는 5MB 이하만 업로드할 수 있어요.' }
+    const ext = file.name.split('.').pop()
+    const path = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+    const { error: uploadError } = await supabase.storage
+      .from('activity-images')
+      .upload(path, file, { contentType: file.type })
+    if (uploadError) return { error: '이미지 업로드에 실패했어요. 잠시 후 다시 시도해주세요.' }
+    const { data: { publicUrl } } = supabase.storage.from('activity-images').getPublicUrl(path)
+    urls.push(publicUrl)
+  }
+  return { urls }
+}
 
 export async function createActivity(formData) {
   const supabase = await createClient()
@@ -19,33 +38,19 @@ export async function createActivity(formData) {
   const title = formData.get('title')?.toString().trim() || null
   const category_name = formData.get('category_name')?.toString().trim() || null
   const activity_date = formData.get('activity_date')?.toString()
-  const imageFile = formData.get('image')
+  const imageFiles = formData.getAll('images').filter(f => f.size > 0)
 
-  const hasImage = imageFile && imageFile.size > 0
-  if (!title && !hasImage) return { error: '활동 내용을 입력하거나 이미지를 첨부해주세요.' }
+  if (!title && imageFiles.length === 0) return { error: '활동 내용을 입력하거나 이미지를 첨부해주세요.' }
   if (title && title.length > TITLE_MAX) return { error: `${TITLE_MAX}자 이내로 입력해주세요.` }
   if (!activity_date || !DATE_RE.test(activity_date)) return { error: '날짜 형식이 올바르지 않아요.' }
+  if (imageFiles.length > IMAGE_MAX_COUNT) return { error: `이미지는 최대 ${IMAGE_MAX_COUNT}장까지 업로드할 수 있어요.` }
 
   let image_url = null
 
-  if (imageFile && imageFile.size > 0) {
-    if (!ALLOWED_TYPES.includes(imageFile.type)) return { error: '이미지 파일만 업로드할 수 있어요.' }
-    if (imageFile.size > IMAGE_MAX_BYTES) return { error: '이미지는 5MB 이하만 업로드할 수 있어요.' }
-
-    const ext = imageFile.name.split('.').pop()
-    const path = `${user.id}/${Date.now()}.${ext}`
-
-    const { error: uploadError } = await supabase.storage
-      .from('activity-images')
-      .upload(path, imageFile, { contentType: imageFile.type })
-
-    if (uploadError) {
-      console.error('[createActivity] upload', { code: uploadError.message, userId: user.id })
-      return { error: '이미지 업로드에 실패했어요. 잠시 후 다시 시도해주세요.' }
-    }
-
-    const { data: { publicUrl } } = supabase.storage.from('activity-images').getPublicUrl(path)
-    image_url = publicUrl
+  if (imageFiles.length > 0) {
+    const { urls, error } = await uploadImages(supabase, user.id, imageFiles)
+    if (error) return { error }
+    image_url = serializeImageUrls(urls)
   }
 
   const { error } = await supabase.from('activity_log').insert({
@@ -73,35 +78,25 @@ export async function updateActivity(id, formData) {
 
   const title = formData.get('title')?.toString().trim() || null
   const category_name = formData.get('category_name')?.toString().trim() || null
-  const removeImage = formData.get('remove_image') === 'true'
-  const imageFile = formData.get('image')
-  const hasNewImage = imageFile && imageFile.size > 0
+  const existingImageUrls = JSON.parse(formData.get('existing_images') || '[]')
+  const newImageFiles = formData.getAll('images').filter(f => f.size > 0)
 
-  if (!title && !hasNewImage && removeImage) return { error: '활동 내용을 입력하거나 이미지를 첨부해주세요.' }
+  const totalCount = existingImageUrls.length + newImageFiles.length
+  if (!title && totalCount === 0) return { error: '활동 내용을 입력하거나 이미지를 첨부해주세요.' }
   if (title && title.length > TITLE_MAX) return { error: `${TITLE_MAX}자 이내로 입력해주세요.` }
+  if (totalCount > IMAGE_MAX_COUNT) return { error: `이미지는 최대 ${IMAGE_MAX_COUNT}장까지 업로드할 수 있어요.` }
 
   let image_url = undefined
 
-  if (hasNewImage) {
-    if (!ALLOWED_TYPES.includes(imageFile.type)) return { error: '이미지 파일만 업로드할 수 있어요.' }
-    if (imageFile.size > IMAGE_MAX_BYTES) return { error: '이미지는 5MB 이하만 업로드할 수 있어요.' }
-    const ext = imageFile.name.split('.').pop()
-    const path = `${user.id}/${Date.now()}.${ext}`
-    const { error: uploadError } = await supabase.storage
-      .from('activity-images')
-      .upload(path, imageFile, { contentType: imageFile.type })
-    if (uploadError) {
-      console.error('[updateActivity] upload', { code: uploadError.message, userId: user.id })
-      return { error: '이미지 업로드에 실패했어요. 잠시 후 다시 시도해주세요.' }
-    }
-    const { data: { publicUrl } } = supabase.storage.from('activity-images').getPublicUrl(path)
-    image_url = publicUrl
-  } else if (removeImage) {
-    image_url = null
+  if (newImageFiles.length > 0) {
+    const { urls, error } = await uploadImages(supabase, user.id, newImageFiles)
+    if (error) return { error }
+    image_url = serializeImageUrls([...existingImageUrls, ...urls])
+  } else {
+    image_url = serializeImageUrls(existingImageUrls)
   }
 
-  const updates = { title, category_name: category_name || null }
-  if (image_url !== undefined) updates.image_url = image_url
+  const updates = { title, category_name: category_name || null, image_url }
 
   const { error } = await supabase
     .from('activity_log')

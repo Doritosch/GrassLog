@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useMain } from '@/components/providers/MainProvider'
 import { getCategoryColor } from '@/lib/category-colors'
 import { toKSTDateStr } from '@/lib/date/kst'
+import { parseImageUrls } from '@/lib/image-urls'
 
 function formatDate(dateStr) {
   const date = new Date(dateStr + 'T00:00:00')
@@ -99,7 +100,7 @@ export default function SearchModal({ onClose, onSelectActivity }) {
                         )
                       })}
                       <span className="text-sm truncate" style={{ color: 'var(--text-body)' }}>
-                        {activity.title || (activity.image_url ? '이미지' : '')}
+                        {activity.title || (parseImageUrls(activity.image_url).length > 0 ? '이미지' : '')}
                       </span>
                     </div>
                   </div>

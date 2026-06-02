@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { buildHeatmapGrid, countToBucket, buildCountMap } from '@/lib/date/heatmap-grid'
+import { parseImageUrls } from '@/lib/image-urls'
 
 const BUCKET_COLORS = {
   green:  ['#161B22', '#0e4429', '#006d32', '#26a641', '#39d353'],
@@ -189,7 +190,7 @@ export default function HeatmapInteractive({ activities = [], theme = 'green' })
                 <li key={a.id} className="flex items-center gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#39d353] shrink-0" />
                   <span style={{ color: a.title ? 'var(--text-body)' : 'var(--text-muted)' }} className="text-sm">
-                    {a.title || (a.image_url ? '이미지' : '')}
+                    {a.title || (parseImageUrls(a.image_url).length > 0 ? '이미지' : '')}
                   </span>
                   {a.category_name && <span style={{ color: 'var(--text-muted)' }} className="text-xs">· {a.category_name}</span>}
                 </li>

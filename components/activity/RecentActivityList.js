@@ -5,6 +5,7 @@ import { deleteActivity } from '@/app/(main)/dashboard/actions'
 import { getCategoryColor } from '@/lib/category-colors'
 import { useMain } from '@/components/providers/MainProvider'
 import { toKSTDateStr } from '@/lib/date/kst'
+import { parseImageUrls } from '@/lib/image-urls'
 
 export default function RecentActivityList({ activities, selectedDate }) {
   const { highlightId, editedIds, setEditingActivity } = useMain()
@@ -70,16 +71,25 @@ export default function RecentActivityList({ activities, selectedDate }) {
                     )
                   }) : <span className="inline-block" />}
                 </div>
-                <p style={{ color: 'var(--text-body)' }} className="text-sm whitespace-pre-wrap break-words min-w-0">{activity.title}</p>
-                {activity.image_url && (
-                  <img
-                    src={activity.image_url}
-                    alt="첨부 이미지"
-                    className="max-w-xs max-h-64 w-auto h-auto rounded-lg object-contain border cursor-pointer"
-                    style={{ borderColor: 'var(--border)' }}
-                    onClick={() => window.open(activity.image_url, '_blank')}
-                  />
-                )}
+                <div className="flex flex-col gap-1.5 min-w-0 flex-1">
+                  {parseImageUrls(activity.image_url).length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {parseImageUrls(activity.image_url).map((url, idx) => (
+                        <img
+                          key={idx}
+                          src={url}
+                          alt="첨부 이미지"
+                          className="max-w-xs max-h-64 w-auto h-auto rounded-lg object-contain border cursor-pointer"
+                          style={{ borderColor: 'var(--border)' }}
+                          onClick={() => window.open(url, '_blank')}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  {activity.title && (
+                    <p style={{ color: 'var(--text-body)' }} className="text-sm whitespace-pre-wrap break-words min-w-0">{activity.title}</p>
+                  )}
+                </div>
               </div>
 
               <div className="flex flex-col items-end gap-1 shrink-0">
