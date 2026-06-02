@@ -60,7 +60,7 @@ export default function RecentActivityList({ activities, selectedDate }) {
                   <img
                     src={activity.image_url}
                     alt="첨부 이미지"
-                    className="h-32 w-auto rounded-lg object-cover border border-[#30363D] cursor-pointer"
+                    className="max-h-48 w-auto max-w-full rounded-lg object-contain border border-[#30363D] cursor-pointer"
                     onClick={() => window.open(activity.image_url, '_blank')}
                   />
                 )}
