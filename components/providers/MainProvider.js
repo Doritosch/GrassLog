@@ -11,9 +11,10 @@ export function useMain() {
 export default function MainProvider({ children, activities, categories, email }) {
   const today = new Date().toISOString().split('T')[0]
   const [selectedDate, setSelectedDate] = useState(today)
+  const [highlightId, setHighlightId] = useState(null)
 
   return (
-    <MainContext.Provider value={{ activities, categories, selectedDate, setSelectedDate, email }}>
+    <MainContext.Provider value={{ activities, categories, selectedDate, setSelectedDate, email, highlightId, setHighlightId }}>
       {children}
     </MainContext.Provider>
   )

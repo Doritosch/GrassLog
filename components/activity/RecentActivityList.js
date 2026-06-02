@@ -1,13 +1,23 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import { deleteActivity } from '@/app/(main)/dashboard/actions'
 import { getCategoryColor } from '@/lib/category-colors'
+import { useMain } from '@/components/providers/MainProvider'
 
 export default function RecentActivityList({ activities, selectedDate }) {
+  const { highlightId } = useMain()
+  const highlightRef = useRef(null)
   const today = new Date().toISOString().split('T')[0]
   const activeDate = selectedDate || today
 
   const filtered = activities.filter((a) => a.activity_date === activeDate)
+
+  useEffect(() => {
+    if (highlightId && highlightRef.current) {
+      highlightRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [highlightId])
 
   if (filtered.length === 0) {
     return (
@@ -32,14 +42,16 @@ export default function RecentActivityList({ activities, selectedDate }) {
           const categories = activity.category_name
             ? activity.category_name.split(', ').filter(Boolean)
             : []
+          const isHighlighted = activity.id === highlightId
 
           return (
             <div
               key={activity.id}
-              className="flex items-start gap-3 px-3 py-2 rounded-md group transition-colors"
-              style={{ '--hover-bg': 'var(--bg-surface)' }}
-              onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-surface)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              ref={isHighlighted ? highlightRef : null}
+              className="flex items-start gap-3 px-3 py-2 rounded-md group transition-all duration-300"
+              style={{ background: isHighlighted ? 'var(--bg-elevated)' : 'transparent' }}
+              onMouseEnter={e => { if (!isHighlighted) e.currentTarget.style.background = 'var(--bg-surface)' }}
+              onMouseLeave={e => { if (!isHighlighted) e.currentTarget.style.background = 'transparent' }}
             >
               <div className="flex items-start gap-2 min-w-0 flex-1">
                 <div className="flex gap-1 shrink-0 md:min-w-[60px]">
@@ -75,7 +87,7 @@ export default function RecentActivityList({ activities, selectedDate }) {
                 <button
                   onClick={() => deleteActivity(activity.id)}
                   style={{ color: 'var(--text-muted)' }}
-                  className="hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all text-xs"
+                  className="hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all text-xs cursor-pointer"
                 >
                   삭제
                 </button>

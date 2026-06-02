@@ -14,7 +14,7 @@ function formatDate(dateStr) {
   return `${date.getMonth() + 1}월 ${date.getDate()}일`
 }
 
-export default function SearchModal({ onClose, onSelectDate }) {
+export default function SearchModal({ onClose, onSelectActivity }) {
   const { activities } = useMain()
   const [query, setQuery] = useState('')
   const inputRef = useRef(null)
@@ -35,11 +35,6 @@ export default function SearchModal({ onClose, onSelectDate }) {
         )
       })
     : []
-
-  const handleSelect = (activity) => {
-    onSelectDate(activity.activity_date)
-    onClose()
-  }
 
   return (
     <div
@@ -66,7 +61,7 @@ export default function SearchModal({ onClose, onSelectDate }) {
             style={{ color: 'var(--text-primary)' }}
           />
           {query && (
-            <button onClick={() => setQuery('')} style={{ color: 'var(--text-muted)' }} className="hover:opacity-80 text-xs">
+            <button onClick={() => setQuery('')} style={{ color: 'var(--text-muted)' }} className="hover:opacity-80 text-xs cursor-pointer">
               ×
             </button>
           )}
@@ -86,14 +81,14 @@ export default function SearchModal({ onClose, onSelectDate }) {
               return (
                 <button
                   key={activity.id}
-                  onClick={() => handleSelect(activity)}
-                  className="w-full flex items-center gap-3 px-4 py-3 border-b text-left transition-colors"
+                  onClick={() => onSelectActivity(activity)}
+                  className="w-full flex items-center gap-3 px-4 py-3 border-b text-left transition-colors cursor-pointer"
                   style={{ borderColor: 'var(--border)' }}
                   onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-elevated)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
                   <div className="flex flex-col gap-1 min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       {categories.map((cat) => {
                         const color = getCategoryColor(cat)
                         return (

@@ -20,8 +20,15 @@ function formatDate(dateStr) {
 }
 
 export default function DashboardMain() {
-  const { activities, categories, selectedDate, setSelectedDate, email } = useMain()
+  const { activities, categories, selectedDate, setSelectedDate, email, setHighlightId } = useMain()
   const [searchOpen, setSearchOpen] = useState(false)
+
+  const handleSelectActivity = (activity) => {
+    setSelectedDate(activity.activity_date)
+    setHighlightId(activity.id)
+    setSearchOpen(false)
+    setTimeout(() => setHighlightId(null), 2000)
+  }
 
   return (
     <>
@@ -29,7 +36,7 @@ export default function DashboardMain() {
       {searchOpen && (
         <SearchModal
           onClose={() => setSearchOpen(false)}
-          onSelectDate={(date) => { setSelectedDate(date); setSearchOpen(false) }}
+          onSelectActivity={handleSelectActivity}
         />
       )}
       <TopBar title={formatDate(selectedDate)} email={email} onSearchOpen={() => setSearchOpen(true)} />
