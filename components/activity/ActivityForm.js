@@ -11,13 +11,32 @@ export default function ActivityForm({ categories }) {
   const [selectedCategory, setSelectedCategory] = useState([])
   const [imageFile, setImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
+  const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef(null)
 
-  const handleImageChange = (e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+  const applyImage = (file) => {
+    if (!file || !file.type.startsWith('image/')) return
     setImageFile(file)
     setImagePreview(URL.createObjectURL(file))
+  }
+
+  const handleImageChange = (e) => {
+    applyImage(e.target.files?.[0])
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = (e) => {
+    if (!e.currentTarget.contains(e.relatedTarget)) setIsDragging(false)
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault()
+    setIsDragging(false)
+    applyImage(e.dataTransfer.files?.[0])
   }
 
   const removeImage = () => {
@@ -67,7 +86,12 @@ export default function ActivityForm({ categories }) {
       )}
 
       {/* 한 줄 통합 입력창 */}
-      <div className="flex items-center gap-2 bg-[#161B22] border border-[#30363D] rounded-xl px-4 py-2.5 focus-within:border-[#388BFD] transition-colors">
+      <div
+        className={`flex items-center gap-2 bg-[#161B22] border rounded-xl px-4 py-2.5 focus-within:border-[#388BFD] transition-colors ${isDragging ? 'border-[#388BFD] bg-[#1c2333]' : 'border-[#30363D]'}`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
         {/* 카테고리 태그들 */}
         {selectedCategory.map((name) => {
           const color = getCategoryColor(name)
@@ -92,7 +116,7 @@ export default function ActivityForm({ categories }) {
           name="title"
           rows={1}
           placeholder="오늘 무엇을 했나요?"
-          required
+          required={!imageFile}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault()

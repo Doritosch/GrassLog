@@ -21,8 +21,9 @@ export async function createActivity(formData) {
   const activity_date = formData.get('activity_date')?.toString()
   const imageFile = formData.get('image')
 
-  if (!title) return { error: '활동 내용을 입력해주세요.' }
-  if (title.length > TITLE_MAX) return { error: `${TITLE_MAX}자 이내로 입력해주세요.` }
+  const hasImage = imageFile && imageFile.size > 0
+  if (!title && !hasImage) return { error: '활동 내용을 입력하거나 이미지를 첨부해주세요.' }
+  if (title && title.length > TITLE_MAX) return { error: `${TITLE_MAX}자 이내로 입력해주세요.` }
   if (!activity_date || !DATE_RE.test(activity_date)) return { error: '날짜 형식이 올바르지 않아요.' }
 
   let image_url = null
