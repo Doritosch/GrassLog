@@ -14,9 +14,9 @@ export default function DateHeader({ selectedDate, activities }) {
   const count = activities.filter((a) => a.activity_date === selectedDate).length
   return (
     <div className="flex items-center gap-3 px-6 pt-5 pb-3 shrink-0">
-      <span className="text-white text-base font-bold">{formatDate(selectedDate)}</span>
-      {count > 0 && <span className="text-[#8B949E] text-xs">{count}개</span>}
-      <div className="flex-1 h-px bg-[#21262D]" />
+      <span style={{ color: 'var(--text-primary)' }} className="text-base font-bold">{formatDate(selectedDate)}</span>
+      {count > 0 && <span style={{ color: 'var(--text-muted)' }} className="text-xs">{count}개</span>}
+      <div className="flex-1 h-px" style={{ background: 'var(--bg-elevated)' }} />
     </div>
   )
 }

@@ -19,9 +19,9 @@ function DateHeader({ selectedDate, activities }) {
   const count = activities.filter((a) => a.activity_date === selectedDate).length
   return (
     <div className="flex items-center gap-3 px-6 pt-5 pb-3 shrink-0">
-      <span className="text-white text-base font-bold">{formatDate(selectedDate)}</span>
-      {count > 0 && <span className="text-[#8B949E] text-xs">{count}개</span>}
-      <div className="flex-1 h-px bg-[#21262D]" />
+      <span style={{ color: 'var(--text-primary)' }} className="text-base font-bold">{formatDate(selectedDate)}</span>
+      {count > 0 && <span style={{ color: 'var(--text-muted)' }} className="text-xs">{count}개</span>}
+      <div className="flex-1 h-px" style={{ background: 'var(--bg-elevated)' }} />
     </div>
   )
 }
@@ -31,7 +31,7 @@ export default function DashboardClient({ activities, categories }) {
   const [selectedDate, setSelectedDate] = useState(today)
 
   return (
-    <div className="flex h-screen bg-[#0D1117]">
+    <div className="flex h-screen" style={{ background: 'var(--bg-base)' }}>
       <ActivitySidebar
         activities={activities}
         selectedDate={selectedDate}
@@ -39,17 +39,13 @@ export default function DashboardClient({ activities, categories }) {
       />
 
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
-        {/* 고정 날짜 헤더 */}
         <DateHeader selectedDate={selectedDate} activities={activities} />
 
         <div className="flex-1 overflow-y-auto px-6 py-4 scrollbar-dark">
-          <RecentActivityList
-            activities={activities}
-            selectedDate={selectedDate}
-          />
+          <RecentActivityList activities={activities} selectedDate={selectedDate} />
         </div>
 
-        <div className="border-t border-[#30363D] bg-[#0D1117] px-6 py-4 shrink-0">
+        <div className="border-t px-6 py-4 shrink-0" style={{ borderColor: 'var(--border)', background: 'var(--bg-base)' }}>
           <div className="max-w-2xl mx-auto">
             <ActivityForm categories={categories} />
           </div>

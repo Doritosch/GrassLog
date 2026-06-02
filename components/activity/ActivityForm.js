@@ -76,18 +76,23 @@ export default function ActivityForm({ categories }) {
       {/* 이미지 미리보기 */}
       {imagePreview && (
         <div className="relative inline-block">
-          <img src={imagePreview} alt="미리보기" className="h-20 rounded-lg object-cover border border-[#30363D]" />
+          <img src={imagePreview} alt="미리보기" className="h-20 rounded-lg object-cover border" style={{ borderColor: 'var(--border)' }} />
           <button
             type="button"
             onClick={removeImage}
-            className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#30363D] hover:bg-red-500 text-white rounded-full text-xs flex items-center justify-center transition-colors"
+            className="absolute -top-1.5 -right-1.5 w-5 h-5 hover:bg-red-500 text-white rounded-full text-xs flex items-center justify-center transition-colors"
+            style={{ background: 'var(--bg-elevated)' }}
           >×</button>
         </div>
       )}
 
       {/* 한 줄 통합 입력창 */}
       <div
-        className={`flex items-center gap-2 bg-[#161B22] border rounded-xl px-4 py-2.5 focus-within:border-[#388BFD] transition-colors ${isDragging ? 'border-[#388BFD] bg-[#1c2333]' : 'border-[#30363D]'}`}
+        style={{
+          background: isDragging ? 'var(--bg-elevated)' : 'var(--bg-surface)',
+          borderColor: isDragging ? 'var(--link)' : 'var(--border)',
+        }}
+        className="flex items-center gap-2 border rounded-xl px-4 py-2.5 focus-within:border-[var(--link)] transition-colors"
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -127,14 +132,16 @@ export default function ActivityForm({ categories }) {
             e.target.style.height = 'auto'
             e.target.style.height = e.target.scrollHeight + 'px'
           }}
-          className="flex-1 bg-transparent text-white placeholder-[#8B949E] focus:outline-none text-sm min-w-0 resize-none leading-tight overflow-hidden"
+          style={{ color: 'var(--text-primary)' }}
+          className="flex-1 bg-transparent placeholder-[color:var(--text-muted)] focus:outline-none text-sm min-w-0 resize-none leading-tight overflow-hidden"
         />
 
         {/* 이미지 업로드 버튼 */}
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="text-[#8B949E] hover:text-white transition-colors shrink-0"
+          style={{ color: 'var(--text-muted)' }}
+          className="hover:opacity-80 transition-opacity shrink-0"
           title="이미지 첨부"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -165,7 +172,8 @@ export default function ActivityForm({ categories }) {
         <button
           type="submit"
           disabled={loading}
-          className="px-3 py-1.5 bg-[#238636] hover:bg-[#2ea043] disabled:opacity-50 text-white rounded-lg text-sm font-medium transition-colors shrink-0"
+          style={{ background: 'var(--accent)' }}
+          className="px-3 py-1.5 hover:opacity-90 disabled:opacity-50 text-white rounded-lg text-sm font-medium transition-opacity shrink-0"
         >
           {loading ? '...' : '기록'}
         </button>

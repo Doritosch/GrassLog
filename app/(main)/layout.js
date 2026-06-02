@@ -27,8 +27,7 @@ export default async function MainLayout({ children }) {
 
   return (
     <MainProvider activities={activities || []} categories={categories || []} email={user.email}>
-      <div className="flex h-screen bg-[#0D1117]">
-        {/* 데스크탑 사이드바 */}
+      <div className="flex h-screen" style={{ background: 'var(--bg-base)' }}>
         <div className="hidden md:flex">
           <SidebarWrapper />
         </div>
@@ -36,7 +35,6 @@ export default async function MainLayout({ children }) {
           {children}
         </div>
       </div>
-      {/* 모바일 하단 탭바 */}
       <MobileTabBar />
     </MainProvider>
   )

@@ -30,7 +30,7 @@ export default function DashboardMain() {
         <RecentActivityList activities={activities} selectedDate={selectedDate} />
       </div>
 
-      <div className="border-t border-[#30363D] bg-[#0D1117] px-6 py-4 pb-[calc(1rem+56px)] md:pb-4 shrink-0">
+      <div style={{ borderColor: 'var(--border)', background: 'var(--bg-base)' }} className="border-t px-6 py-4 pb-[calc(1rem+56px)] md:pb-4 shrink-0">
         <div className="max-w-2xl mx-auto">
           <ActivityForm categories={categories} />
         </div>

@@ -14,7 +14,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0D1117] flex items-center justify-center px-4">
+    <main className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--bg-base)' }}>
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-1 mb-4">
@@ -32,8 +32,8 @@ export default function LoginPage() {
               ))}
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-white">GrassLog</h1>
-          <p className="text-[#8B949E] text-sm">오늘의 활동을 기록하고 잔디를 채워보세요</p>
+          <h1 style={{ color: 'var(--text-primary)' }} className="text-2xl font-bold">GrassLog</h1>
+          <p style={{ color: 'var(--text-muted)' }} className="text-sm">오늘의 활동을 기록하고 잔디를 채워보세요</p>
         </div>
 
         <div className="space-y-3">

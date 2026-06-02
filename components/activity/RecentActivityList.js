@@ -17,9 +17,9 @@ export default function RecentActivityList({ activities, selectedDate }) {
             <div key={i} className="w-3 h-3 rounded-sm bg-[#39d353]" />
           ))}
         </div>
-        <p className="text-[#8B949E] text-sm">이 날 기록된 활동이 없어요.</p>
+        <p style={{ color: 'var(--text-muted)' }} className="text-sm">이 날 기록된 활동이 없어요.</p>
         {activeDate === today && (
-          <p className="text-[#8B949E] text-xs mt-1">아래 입력창에서 오늘의 첫 활동을 기록해보세요!</p>
+          <p style={{ color: 'var(--text-muted)' }} className="text-xs mt-1">아래 입력창에서 오늘의 첫 활동을 기록해보세요!</p>
         )}
       </div>
     )
@@ -36,7 +36,10 @@ export default function RecentActivityList({ activities, selectedDate }) {
           return (
             <div
               key={activity.id}
-              className="flex items-start gap-3 px-3 py-2 rounded-md hover:bg-[#161B22] group transition-colors"
+              className="flex items-start gap-3 px-3 py-2 rounded-md group transition-colors"
+              style={{ '--hover-bg': 'var(--bg-surface)' }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-surface)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
               <div className="flex items-start gap-2 min-w-0 flex-1">
                 <div className="flex gap-1 shrink-0 md:min-w-[60px]">
@@ -53,12 +56,13 @@ export default function RecentActivityList({ activities, selectedDate }) {
                     )
                   }) : <span className="inline-block" />}
                 </div>
-                <p className="text-[#C9D1D9] text-sm whitespace-pre-wrap break-words min-w-0">{activity.title}</p>
+                <p style={{ color: 'var(--text-body)' }} className="text-sm whitespace-pre-wrap break-words min-w-0">{activity.title}</p>
                 {activity.image_url && (
                   <img
                     src={activity.image_url}
                     alt="첨부 이미지"
-                    className="max-w-xs max-h-64 w-auto h-auto rounded-lg object-contain border border-[#30363D] cursor-pointer"
+                    className="max-w-xs max-h-64 w-auto h-auto rounded-lg object-contain border cursor-pointer"
+                    style={{ borderColor: 'var(--border)' }}
                     onClick={() => window.open(activity.image_url, '_blank')}
                   />
                 )}
@@ -66,7 +70,8 @@ export default function RecentActivityList({ activities, selectedDate }) {
 
               <button
                 onClick={() => deleteActivity(activity.id)}
-                className="text-[#8B949E] hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all text-xs shrink-0 mt-0.5"
+                style={{ color: 'var(--text-muted)' }}
+                className="hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all text-xs shrink-0 mt-0.5"
               >
                 삭제
               </button>

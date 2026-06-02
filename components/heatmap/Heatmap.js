@@ -14,7 +14,6 @@ export default function Heatmap({ activities = [], theme = 'green', days = 90 })
   const countMap = buildCountMap(activities)
   const colors = BUCKET_COLORS[theme] || BUCKET_COLORS.green
 
-  // 월 레이블 — 어느 주(row)에 표시할지
   const monthAtWeek = {}
   weeks.forEach((week, wi) => {
     const firstInRange = week.find((d) => d.inRange)
@@ -27,56 +26,33 @@ export default function Heatmap({ activities = [], theme = 'green', days = 90 })
   })
 
   return (
-    <div className="bg-[#161B22] border border-[#30363D] rounded-lg p-4 overflow-y-auto h-full">
+    <div className="border rounded-lg p-4 overflow-y-auto h-full" style={{ background: 'var(--bg-surface)', borderColor: 'var(--border)' }}>
       <div className="inline-block">
-        {/* 요일 헤더 (가로) */}
         <div className="flex mb-1 ml-8" style={{ gap: '2px' }}>
           {DAY_LABELS.map((day) => (
-            <div
-              key={day}
-              className="text-[#8B949E] text-center"
-              style={{ width: '12px', fontSize: '8px' }}
-            >
+            <div key={day} style={{ width: '12px', fontSize: '8px', color: 'var(--text-muted)', textAlign: 'center' }}>
               {day[0]}
             </div>
           ))}
         </div>
 
-        {/* 주(row) 목록 — 세로로 쌓임 */}
         <div className="flex flex-col" style={{ gap: '2px' }}>
           {weeks.map((week, wi) => (
             <div key={wi} className="flex items-center" style={{ gap: '2px' }}>
-              {/* 월 레이블 */}
-              <div
-                className="text-[#8B949E] text-right pr-1 shrink-0"
-                style={{ width: '28px', fontSize: '8px' }}
-              >
+              <div style={{ width: '28px', fontSize: '8px', color: 'var(--text-muted)', textAlign: 'right', paddingRight: '4px', flexShrink: 0 }}>
                 {monthAtWeek[wi] || ''}
               </div>
-
-              {/* 요일 셀 (일~토 → Mon~Sun 순으로 재정렬) */}
               {[1, 2, 3, 4, 5, 6, 0].map((dayIndex) => {
                 const cell = week[dayIndex]
-                if (!cell) return (
-                  <div
-                    key={dayIndex}
-                    style={{ width: '12px', height: '12px', borderRadius: '2px', backgroundColor: 'transparent' }}
-                  />
-                )
+                if (!cell) return <div key={dayIndex} style={{ width: '12px', height: '12px', borderRadius: '2px', backgroundColor: 'transparent' }} />
                 const count = countMap[cell.date] || 0
                 const bucket = cell.inRange ? countToBucket(count) : 0
-                const color = cell.inRange ? colors[bucket] : '#0D1117'
+                const color = cell.inRange ? colors[bucket] : 'var(--bg-base)'
                 return (
                   <div
                     key={dayIndex}
                     title={cell.inRange ? `${cell.date}: ${count}개` : ''}
-                    style={{
-                      width: '12px',
-                      height: '12px',
-                      backgroundColor: color,
-                      borderRadius: '2px',
-                      flexShrink: 0,
-                    }}
+                    style={{ width: '12px', height: '12px', backgroundColor: color, borderRadius: '2px', flexShrink: 0 }}
                   />
                 )
               })}
@@ -84,16 +60,12 @@ export default function Heatmap({ activities = [], theme = 'green', days = 90 })
           ))}
         </div>
 
-        {/* 범례 */}
         <div className="flex items-center gap-1 mt-3 ml-8">
-          <span className="text-[#8B949E] text-xs">Less</span>
+          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Less</span>
           {colors.map((color, i) => (
-            <div
-              key={i}
-              style={{ width: '10px', height: '10px', backgroundColor: color, borderRadius: '2px' }}
-            />
+            <div key={i} style={{ width: '10px', height: '10px', backgroundColor: color, borderRadius: '2px' }} />
           ))}
-          <span className="text-[#8B949E] text-xs">More</span>
+          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>More</span>
         </div>
       </div>
     </div>

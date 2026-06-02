@@ -27,14 +27,16 @@ export default function MobileTabBar() {
   const pathname = usePathname()
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#161B22] border-t border-[#30363D] flex z-50">
+    <div
+      className="md:hidden fixed bottom-0 left-0 right-0 border-t flex z-50"
+      style={{ background: 'var(--bg-surface)', borderColor: 'var(--border)' }}
+    >
       {tabs.map(({ href, label, Icon }) => (
         <Link
           key={href}
           href={href}
-          className={`flex-1 flex flex-col items-center justify-center py-3 gap-1 transition-colors ${
-            pathname === href ? 'text-white' : 'text-[#8B949E]'
-          }`}
+          className="flex-1 flex flex-col items-center justify-center py-3 gap-1 transition-opacity"
+          style={{ color: pathname === href ? 'var(--text-primary)' : 'var(--text-muted)' }}
         >
           <Icon />
           <span className="text-[10px]">{label}</span>

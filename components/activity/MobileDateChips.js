@@ -25,16 +25,20 @@ export default function MobileDateChips() {
   if (sortedDates.length === 0) return null
 
   return (
-    <div className="md:hidden flex gap-2 px-4 py-2 overflow-x-auto scrollbar-none border-b border-[#30363D]">
+    <div
+      className="md:hidden flex gap-2 px-4 py-2 overflow-x-auto scrollbar-none border-b"
+      style={{ borderColor: 'var(--border)' }}
+    >
       {sortedDates.map((date) => (
         <button
           key={date}
-          onClick={() => setSelectedDate(selectedDate === date ? date : date)}
-          className={`flex-shrink-0 text-xs px-3 py-1 rounded-full border transition-colors ${
+          onClick={() => setSelectedDate(date)}
+          className="flex-shrink-0 text-xs px-3 py-1 rounded-full border transition-colors"
+          style={
             selectedDate === date
-              ? 'bg-[#238636] border-[#238636] text-white'
-              : 'border-[#30363D] text-[#8B949E]'
-          }`}
+              ? { background: 'var(--accent)', borderColor: 'var(--accent)', color: '#ffffff' }
+              : { borderColor: 'var(--border)', color: 'var(--text-muted)' }
+          }
         >
           {formatChipDate(date)}
           <span className="ml-1 opacity-60">{dateCounts[date]}</span>
