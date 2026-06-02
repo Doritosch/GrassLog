@@ -188,7 +188,9 @@ export default function HeatmapInteractive({ activities = [], theme = 'green' })
               {selectedActivities.map((a) => (
                 <li key={a.id} className="flex items-center gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#39d353] shrink-0" />
-                  <span style={{ color: 'var(--text-body)' }} className="text-sm">{a.title}</span>
+                  <span style={{ color: a.title ? 'var(--text-body)' : 'var(--text-muted)' }} className="text-sm">
+                    {a.title || (a.image_url ? '이미지' : '')}
+                  </span>
                   {a.category_name && <span style={{ color: 'var(--text-muted)' }} className="text-xs">· {a.category_name}</span>}
                 </li>
               ))}
