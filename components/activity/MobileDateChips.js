@@ -27,6 +27,7 @@ export default function MobileDateChips() {
 
   return (
     <div
+      data-tour="tour-date-chips"
       className="md:hidden flex gap-2 px-4 py-2 overflow-x-auto scrollbar-none border-b"
       style={{ borderColor: 'var(--border)' }}
     >

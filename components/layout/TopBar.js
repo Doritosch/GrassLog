@@ -22,6 +22,13 @@ const IconSearch = () => (
   </svg>
 )
 
+const IconLogout = () => (
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+    <path fillRule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
+    <path fillRule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+  </svg>
+)
+
 export default function TopBar({ title, email, onSearchOpen }) {
   const router = useRouter()
   const { theme, toggleTheme } = useTheme()
@@ -33,34 +40,40 @@ export default function TopBar({ title, email, onSearchOpen }) {
   }
 
   return (
-    <div style={{ borderColor: 'var(--border)' }} className="px-6 py-4 border-b flex items-center justify-between shrink-0">
+    <div style={{ borderColor: 'var(--border)' }} className="px-4 md:px-6 py-3 md:py-4 border-b flex items-center justify-between shrink-0">
       <h1 style={{ color: 'var(--text-primary)' }} className="font-bold">{title}</h1>
-      <div className="flex items-center gap-3">
-        <span style={{ color: 'var(--text-muted)' }} className="text-sm hidden md:block">{email}</span>
+      <div className="flex items-center gap-2">
+        <span style={{ color: 'var(--text-muted)' }} className="text-sm hidden md:block mr-1">{email}</span>
+
         {onSearchOpen && (
           <button
             onClick={onSearchOpen}
             style={{ color: 'var(--text-muted)', borderColor: 'var(--border)' }}
-            className="hover:opacity-80 border px-2 py-1 rounded-md transition-opacity flex items-center gap-1"
+            className="hover:opacity-80 border px-2 py-1.5 rounded-md transition-opacity flex items-center gap-1 cursor-pointer"
             title="검색"
           >
             <IconSearch />
+            <span className="hidden md:inline text-xs">검색</span>
           </button>
         )}
+
         <button
           onClick={toggleTheme}
           style={{ color: 'var(--text-muted)', borderColor: 'var(--border)' }}
-          className="hover:opacity-80 border px-2 py-1 rounded-md transition-opacity text-xs flex items-center gap-1"
+          className="hover:opacity-80 border px-2 py-1.5 rounded-md transition-opacity flex items-center gap-1 cursor-pointer"
           title={theme === 'dark' ? '라이트 모드' : '다크 모드'}
         >
           {theme === 'dark' ? <IconSun /> : <IconMoon />}
         </button>
+
         <button
           onClick={handleLogout}
           style={{ color: 'var(--text-muted)', borderColor: 'var(--border)' }}
-          className="hover:opacity-80 text-xs border px-2 py-1 rounded-md transition-opacity"
+          className="hover:opacity-80 border px-2 py-1.5 rounded-md transition-opacity flex items-center gap-1 cursor-pointer"
+          title="로그아웃"
         >
-          로그아웃
+          <IconLogout />
+          <span className="hidden md:inline text-xs">로그아웃</span>
         </button>
       </div>
     </div>

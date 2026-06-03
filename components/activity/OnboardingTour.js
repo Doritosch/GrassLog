@@ -4,38 +4,25 @@ import { useState, useEffect, useRef } from 'react'
 
 const STORAGE_KEY = 'grasslog_onboarding_v2'
 
-const STEPS = [
-  {
-    target: 'tour-input',
-    title: '활동 기록',
-    desc: '오늘 한 일을 여기에 입력하세요. Enter로 바로 저장돼요.',
-    position: 'top',
-  },
-  {
-    target: 'tour-image',
-    title: '이미지 첨부',
-    desc: '이미지를 최대 5장까지 첨부할 수 있어요. 드래그 앤 드롭도 돼요.',
-    position: 'top',
-  },
-  {
-    target: 'tour-category',
-    title: '카테고리',
-    desc: '운동, 독서 등 나만의 카테고리로 활동을 분류해요.',
-    position: 'top',
-  },
-  {
-    target: 'tour-sidebar-dates',
-    title: '날짜 목록',
-    desc: '날짜를 클릭하면 그날의 기록만 볼 수 있어요.',
-    position: 'right',
-  },
-  {
-    target: 'tour-nav-grass',
-    title: '잔디 탭',
-    desc: '연간 활동을 GitHub 잔디 스타일로 한눈에 확인해요.',
-    position: 'right',
-  },
+const DESKTOP_STEPS = [
+  { target: 'tour-input',         title: '활동 기록',   desc: '오늘 한 일을 여기에 입력하세요. Enter로 바로 저장돼요.', position: 'top' },
+  { target: 'tour-image',         title: '이미지 첨부', desc: '이미지를 최대 5장까지 첨부할 수 있어요. 드래그 앤 드롭도 돼요.', position: 'top' },
+  { target: 'tour-category',      title: '카테고리',    desc: '운동, 독서 등 나만의 카테고리로 활동을 분류해요.', position: 'top' },
+  { target: 'tour-sidebar-dates', title: '날짜 목록',   desc: '날짜를 클릭하면 그날의 기록만 볼 수 있어요.', position: 'right' },
+  { target: 'tour-nav-grass',     title: '잔디 탭',     desc: '연간 활동을 GitHub 잔디 스타일로 한눈에 확인해요.', position: 'right' },
 ]
+
+const MOBILE_STEPS = [
+  { target: 'tour-input',        title: '활동 기록',   desc: '오늘 한 일을 여기에 입력하세요. Enter로 바로 저장돼요.', position: 'top' },
+  { target: 'tour-image',        title: '이미지 첨부', desc: '이미지를 최대 5장까지 첨부할 수 있어요.', position: 'top' },
+  { target: 'tour-category',     title: '카테고리',    desc: '나만의 카테고리로 활동을 분류해요.', position: 'top' },
+  { target: 'tour-date-chips',   title: '날짜 필터',   desc: '날짜 칩을 탭하면 그날의 기록을 볼 수 있어요.', position: 'bottom' },
+  { target: 'tour-tab-grass',    title: '잔디 탭',     desc: '연간 활동을 GitHub 잔디 스타일로 한눈에 확인해요.', position: 'top' },
+]
+
+function isMobile() {
+  return window.innerWidth < 768
+}
 
 function getTargetRect(id) {
   const el = document.querySelector(`[data-tour="${id}"]`)
@@ -44,15 +31,19 @@ function getTargetRect(id) {
 }
 
 export default function OnboardingTour() {
-  const [step, setStep] = useState(-1) // -1: 웰컴, 0~: 투어 단계
+  const [step, setStep] = useState(-1)
   const [tooltipStyle, setTooltipStyle] = useState({})
   const [arrowStyle, setArrowStyle] = useState({})
   const [visible, setVisible] = useState(false)
+  const [mobile, setMobile] = useState(false)
   const tooltipRef = useRef(null)
 
   useEffect(() => {
+    setMobile(isMobile())
     if (localStorage.getItem(STORAGE_KEY) !== 'true') setVisible(true)
   }, [])
+
+  const STEPS = mobile ? MOBILE_STEPS : DESKTOP_STEPS
 
   useEffect(() => {
     if (!visible || step < 0) return
@@ -62,16 +53,21 @@ export default function OnboardingTour() {
     const updatePos = () => {
       const rect = getTargetRect(current.target)
       const tip = tooltipRef.current
-      if (!rect || !tip) return
+      if (!tip) return
 
       const tipW = tip.offsetWidth || 280
       const tipH = tip.offsetHeight || 120
       const gap = 12
-      const aw = 10 // arrow half-width
+      const aw = 10
 
       let top, left, arrowTop, arrowLeft, arrowDir
 
-      if (current.position === 'top') {
+      if (!rect) {
+        // 타겟 못 찾으면 중앙에 표시
+        top = window.innerHeight / 2 - tipH / 2
+        left = window.innerWidth / 2 - tipW / 2
+        arrowDir = null
+      } else if (current.position === 'top') {
         top = rect.top - tipH - gap
         left = rect.left + rect.width / 2 - tipW / 2
         arrowTop = tipH
@@ -82,6 +78,12 @@ export default function OnboardingTour() {
           arrowTop = -aw * 2
           arrowDir = 'up'
         }
+      } else if (current.position === 'bottom') {
+        top = rect.bottom + gap
+        left = rect.left + rect.width / 2 - tipW / 2
+        arrowTop = -aw * 2
+        arrowLeft = tipW / 2 - aw
+        arrowDir = 'up'
       } else {
         top = rect.top + rect.height / 2 - tipH / 2
         left = rect.right + gap
@@ -99,13 +101,13 @@ export default function OnboardingTour() {
       top = Math.max(8, Math.min(top, window.innerHeight - tipH - 8))
 
       setTooltipStyle({ top: `${top}px`, left: `${left}px` })
-      setArrowStyle({ top: `${arrowTop}px`, left: `${arrowLeft}px`, dir: arrowDir })
+      setArrowStyle({ top: arrowTop != null ? `${arrowTop}px` : undefined, left: arrowLeft != null ? `${arrowLeft}px` : undefined, dir: arrowDir })
     }
 
     updatePos()
     window.addEventListener('resize', updatePos)
     return () => window.removeEventListener('resize', updatePos)
-  }, [step, visible])
+  }, [step, visible, mobile])
 
   const finish = () => {
     localStorage.setItem(STORAGE_KEY, 'true')
@@ -121,7 +123,6 @@ export default function OnboardingTour() {
 
   if (!visible) return null
 
-  // 웰컴 화면
   if (step === -1) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -167,31 +168,23 @@ export default function OnboardingTour() {
 
   return (
     <>
-      {/* 배경 어둡게 */}
       <div className="fixed inset-0 z-40 bg-black/50" onClick={finish} />
-
-      {/* 현재 타겟 하이라이트 */}
       <TargetHighlight targetId={current.target} />
-
-      {/* 툴팁 */}
       <div
         ref={tooltipRef}
         className="fixed z-50 w-72 rounded-xl shadow-2xl p-4 space-y-3"
         style={{ ...tooltipStyle, background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}
       >
-        {/* 화살표 */}
         {arrowDir && (
           <div
             className={`absolute w-0 h-0 ${arrowBorder[arrowDir]}`}
             style={{ top: arrowStyle.top, left: arrowStyle.left }}
           />
         )}
-
         <div>
           <p style={{ color: 'var(--text-primary)' }} className="text-sm font-semibold">{current.title}</p>
           <p style={{ color: 'var(--text-muted)' }} className="text-xs mt-1 leading-relaxed">{current.desc}</p>
         </div>
-
         <div className="flex items-center justify-between">
           <span style={{ color: 'var(--text-muted)' }} className="text-xs">{step + 1} / {STEPS.length}</span>
           <div className="flex gap-2">
@@ -215,6 +208,7 @@ function TargetHighlight({ targetId }) {
     const update = () => {
       const el = document.querySelector(`[data-tour="${targetId}"]`)
       if (el) setRect(el.getBoundingClientRect())
+      else setRect(null)
     }
     update()
     window.addEventListener('resize', update)

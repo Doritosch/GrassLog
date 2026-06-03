@@ -82,7 +82,7 @@ export default function RecentActivityList({ activities, selectedDate }) {
                           key={idx}
                           src={url}
                           alt="첨부 이미지"
-                          className="max-w-xs max-h-64 w-auto h-auto rounded-lg object-contain border cursor-pointer"
+                          className="max-w-[200px] md:max-w-xs max-h-48 md:max-h-64 w-auto h-auto rounded-lg object-contain border cursor-pointer"
                           style={{ borderColor: 'var(--border)' }}
                           onClick={() => setLightboxSrc(url)}
                         />

@@ -35,6 +35,7 @@ export default function MobileTabBar() {
         <Link
           key={href}
           href={href}
+          data-tour={href === '/grass' ? 'tour-tab-grass' : undefined}
           className="flex-1 flex flex-col items-center justify-center py-3 gap-1 transition-opacity"
           style={{ color: pathname === href ? 'var(--text-primary)' : 'var(--text-muted)' }}
         >
